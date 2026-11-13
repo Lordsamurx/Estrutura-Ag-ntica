@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://conserto-de-panelas-bh.netlify.app/sitemap.xml

@@ -13,3 +13,6 @@ Conserto de panelas/Fotos e Videos/
 .env
 *.env
 node_modules/
+
+# Versões do site em andamento (cada uma vai para o repositório do site)
+Conserto de panelas/site-*/
