@@ -2,7 +2,7 @@
 
 **Relatório de andamento** · 13/11/2026 · preparado pelo Claude (gerente) para o Samuel
 
-> Retrato completo de como a agência vai funcionar com agentes de IA: quem faz o quê, o que já está pronto, o que está planejado nas etapas A a F e o que ainda falta decidir. Primeiro case: **Conserto de Panelas do Clenilton** (site, Instagram e bot de WhatsApp).
+> Retrato completo de como a agência vai funcionar com agentes de IA: quem faz o quê, o que já está pronto, o que está planejado nas etapas A a F e o que ainda falta decidir. Primeiro case: **Conserto de Panelas do Cleonilton** (site, Instagram e bot de WhatsApp).
 
 ---
 
@@ -15,7 +15,7 @@
 | **A.** Arquivos CLAUDE.md por pasta | ✅ Feita e aprovada |
 | **B.** Skills e plugins | ✅ Aprovada; AGENTS.md criados |
 | **C.** Linear (projetos e tarefas) | ✅ Criado no time Projetos: 5 projetos, 11 tarefas |
-| **D.** Checklist para publicar o site | ✅ Aprovado; questionário do Clenilton pronto |
+| **D.** Checklist para publicar o site | ✅ Aprovado; questionário do Cleonilton pronto |
 | **E.** Equipe de agentes do Instagram | ✅ Desenho aprovado |
 | **F.** Plano de 7 dias | ✅ Aprovado (datas podem mudar) |
 | Repositório GitHub da estrutura | ⏳ Falta confirmar nome e visibilidade |
@@ -91,7 +91,7 @@ Estrutura Agentica/
 │   │   └── CLAUDE.md             ← regras do site (novo)
 │   ├── Estrutura Agentica/       ← pacote de marketing (5 agentes, conteúdo)
 │   │   └── CLAUDE.md             ← o que pode e não pode mexer (novo)
-│   └── Fotos e Videos/           ← material bruto do Clenilton
+│   └── Fotos e Videos/           ← material bruto do Cleonilton
 └── Sites/                        ← repositório próprio dos sites dos outros clientes
     ├── CLAUDE.md                 ← regras do repositório (novo)
     └── clientes/ (lorena-caliari, _exemplo), templates/, exemplos…
@@ -174,7 +174,7 @@ Todas já estão instaladas no usuário do Samuel. Dentro do projeto ficam só a
 |---|---|---|---|
 | 1 | Subir a versão mais nova do site no repositório do GitHub | Urgente | Samuel |
 | 2 | Medir o marco zero: contatos por semana vindos do Google | Urgente | Samuel |
-| 3 | Confirmar com o Clenilton: prazo médio, garantia e fotos novas de antes e depois | Alta | Samuel |
+| 3 | Confirmar com o Cleonilton: prazo médio, garantia e fotos novas de antes e depois | Alta | Samuel |
 | 4 | Marcar a origem de cada botão de WhatsApp (site, seção) | Alta | Agente de código |
 | 5 | Instalar GA4 + Search Console e evento de clique no WhatsApp | Alta | Agente de código + Samuel (acessos) |
 | 6 | SEO local: título até 60 caracteres, descrição até 155, schema com as 16 cidades, FAQ e serviços, og:url, twitter:card | Alta | Agente de código |
@@ -192,7 +192,7 @@ As tarefas 4 e 6 mexem no mesmo `index.html`, então rodam uma depois da outra, 
 
 **O site já tem:** serviços, antes e depois, avaliações, região atendida, orçamento e botões de WhatsApp com mensagem pronta, além de `robots.txt` e `sitemap.xml`.
 
-**Pedir ao Clenilton** (questionário pronto: `Conserto de panelas/QUESTIONARIO-CLENILTON.pdf`)
+**Pedir ao Cleonilton** (questionário pronto: `Conserto de panelas/QUESTIONARIO-CLEONILTON.pdf`)
 - [x] Região: foco inicial em BH (respondido 13/11)
 - [x] Logística: a maioria chama Uber ou deixa na oficina; entrega da oficina só caso a caso (respondido 13/11)
 - [x] Prazo: depende do serviço, combinado no orçamento, que sai na hora (respondido 13/11)
@@ -227,7 +227,7 @@ Reaproveita os agentes do pacote de marketing que já existe.
 
 | Agente | Papel | Recebe | Entrega | Passa para |
 |---|---|---|---|---|
-| **MAESTRO** | Coordenador | Fotos, vídeos e recados do Clenilton | Briefing da semana e calendário | VITRINE, LENTE |
+| **MAESTRO** | Coordenador | Fotos, vídeos e recados do Cleonilton | Briefing da semana e calendário | VITRINE, LENTE |
 | **VITRINE** | Gestor do Instagram | Briefing + fotos | Pauta, legendas, hashtags e chamada para o WhatsApp | LENTE |
 | **LENTE** | Editor de mídia | Brutos + pauta | Roteiro do Reel, cortes e capa do carrossel | OFICINA |
 | **OFICINA** | Especialista em panelas | Texto e peça pronta | Revisão técnica e de segurança (nada errado sobre panela de pressão) | MAESTRO |
@@ -245,9 +245,9 @@ Plano comprimido de 2 semanas para 7 dias, a pedido do Samuel. Os 🔒 são bloc
 
 | Dia | Bloco 🔒 (inegociável) | Bloco extra |
 |---|---|---|
-| **Sex 13/11** | 🔒 Subir a versão nova do site no GitHub (PRJ-15) | Marco zero de contatos do Google (PRJ-16); enviar o questionário ao Clenilton (PRJ-17) |
+| **Sex 13/11** | 🔒 Subir a versão nova do site no GitHub (PRJ-15) | Marco zero de contatos do Google (PRJ-16); enviar o questionário ao Cleonilton (PRJ-17) |
 | **Sáb 14/11** | 🔒 Liberar o Orca e disparar o 1º agente: origem do WhatsApp (PRJ-18) | Criar GA4 e Search Console; decidir formulário de empresas e domínio (PRJ-22, PRJ-24) |
-| **Dom 15/11** | 🔒 Revisar o PR da origem; disparar o SEO local (PRJ-20) | Receber respostas e fotos do Clenilton |
+| **Dom 15/11** | 🔒 Revisar o PR da origem; disparar o SEO local (PRJ-20) | Receber respostas e fotos do Cleonilton |
 | **Seg 16/11** | 🔒 Revisar o PR de SEO; disparar a medição (PRJ-19) | Atualizar a ficha do negócio com as respostas |
 | **Ter 17/11** | 🔒 Revisar o PR de medição; disparar a galeria com as fotos novas (PRJ-21) | — |
 | **Qua 18/11** | 🔒 Revisão final (PRJ-23) e **publicar o site** (PRJ-25) | Enviar sitemap, atualizar Google e bio |
@@ -263,8 +263,8 @@ Plano comprimido de 2 semanas para 7 dias, a pedido do Samuel. Os 🔒 são bloc
 | Nome e visibilidade do repositório da estrutura (sugestão: `estrutura-agentica`, privado) | Samuel |
 | Subir a versão nova do site no GitHub (`Conserto-de-panelas`) | Samuel |
 | Liberar o Orca | Samuel |
-| Prazo, garantia, fotos novas, autorização de fotos | Clenilton |
-| Preços dos serviços | Samuel e Clenilton (até lá, sem preço) |
+| Prazo, garantia, fotos novas, autorização de fotos | Cleonilton |
+| Preços dos serviços | Samuel e Cleonilton (até lá, sem preço) |
 | Qual é o principal da Lorena: `index.html` ou `index-polido.html` | Samuel |
 | Acessos do GA4 e do Search Console | Samuel |
 
@@ -274,6 +274,6 @@ Plano comprimido de 2 semanas para 7 dias, a pedido do Samuel. Os 🔒 são bloc
 |---|---|
 | Dois agentes mexendo no mesmo arquivo | Tarefas divididas por arquivo, no máximo 2 em paralelo |
 | Dado inventado no site ou no bot | Ficha do negócio como fonte única; o que não foi confirmado fica "(a validar)" |
-| Bot bloqueado pela Meta | Bot só de atendimento sobre panelas, com passagem para o Clenilton |
+| Bot bloqueado pela Meta | Bot só de atendimento sobre panelas, com passagem para o Cleonilton |
 | Segredo vazar no GitHub | `.env` fora do git, nada de chave em prompt ou Linear |
 | Pouco tempo (3–4 h/noite) | Um bloco inegociável por dia e uma frente por vez |

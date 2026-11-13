@@ -1,6 +1,6 @@
 # Questionário do Conserto de Panelas BH
 
-**Para o Clenilton preencher** · leva uns 10 minutos · pode responder por áudio no WhatsApp
+**Para o Cleonilton preencher** · leva uns 10 minutos · pode responder por áudio no WhatsApp
 
 > Essas respostas vão para o site, o Instagram e o atendimento. Nada é publicado sem você ver antes. Se não souber alguma, pode pular.
 

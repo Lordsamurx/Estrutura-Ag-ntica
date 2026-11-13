@@ -258,7 +258,7 @@ Nenhum agente pode inventar estes dados. Use a formulação segura indicada até
 
 ---
 
-## 11. ATUALIZAÇÃO 13/11/2026 (Samuel, falando pelo Clenilton)
+## 11. ATUALIZAÇÃO 13/11/2026 (Samuel, falando pelo Cleonilton)
 
 - **Região:** foco inicial em Belo Horizonte. Outras cidades da Grande BH seguem o mesmo esquema de Uber, mas o destaque nos textos é BH (a validar se as 16 cidades continuam na lista do site).
 - **Entrega:** a maioria dos clientes chama um Uber para enviar ou retirar, ou deixa e busca na oficina. Entrega feita pela oficina é avaliada caso a caso, conforme o local. Não prometer entrega.

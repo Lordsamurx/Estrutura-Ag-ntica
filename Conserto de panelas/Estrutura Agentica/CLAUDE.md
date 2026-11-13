@@ -6,7 +6,7 @@ Ponto de entrada: `00-COMECE-AQUI.md`. Estado atual: `03-ORQUESTRADOR/ESTADO-DO-
 ## Pode
 - Ler tudo como referência para o site, o Instagram e o bot.
 - Atualizar `03-ORQUESTRADOR/ESTADO-DO-PROJETO.md` quando uma entrega mudar o estado.
-- Atualizar `02-ESTRUTURA-AGENTICA/00-contexto/ficha-negocio.md` só com dado confirmado pelo Samuel ou pelo Clenilton (com data).
+- Atualizar `02-ESTRUTURA-AGENTICA/00-contexto/ficha-negocio.md` só com dado confirmado pelo Samuel ou pelo Cleonilton (com data).
 
 ## Não pode
 - Reescrever prompts, conteúdo ou planos sem tarefa no Linear.

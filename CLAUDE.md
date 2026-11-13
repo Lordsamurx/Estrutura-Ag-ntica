@@ -22,7 +22,7 @@ Leia este arquivo inteiro antes de qualquer tarefa. Depois leia o CLAUDE.md da p
 ## Mapa das pastas
 | Pasta | O que é | Repositório |
 |---|---|---|
-| `Conserto de panelas/` | Primeiro case: conserto de panelas do Clenilton (site, Instagram, bot) | Lordsamurx/Conserto-de-panelas (site) |
+| `Conserto de panelas/` | Primeiro case: conserto de panelas do Cleonilton (site, Instagram, bot) | Lordsamurx/Conserto-de-panelas (site) |
 | `Sites/` | Sites dos outros clientes, modelos e exemplos | Lordsamurx/Sites (repo próprio) |
 | `.claude/skills/` | Skills da agência | este repositório |
 | `_ideias/` | Ideias novas. Viram tarefa de prioridade baixa no Linear e não são executadas | este repositório |
