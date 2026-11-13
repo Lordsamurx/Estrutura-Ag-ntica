@@ -1,0 +1,15 @@
+# Repositórios próprios (não versionar aqui)
+Sites/
+Conserto de panelas/site-novo/
+
+# Material bruto e pesado do cliente (fica só no computador/OneDrive)
+Conserto de panelas/Fotos e Videos/
+**/conversa-bruta.jsonl
+
+# Local e segredos
+.netlify/
+**/.netlify/
+**/.claude/settings.local.json
+.env
+*.env
+node_modules/

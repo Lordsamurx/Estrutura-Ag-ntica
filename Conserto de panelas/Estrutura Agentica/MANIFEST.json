@@ -1,0 +1,362 @@
+{
+  "schemaVersion": "1.0",
+  "project": {
+    "name": "Estrutura Agentica DeepSeek",
+    "business": "Conserto de Panelas em Geral — Belo Horizonte e Grande BH",
+    "contact": {
+      "whatsapp": "(31) 98739-6336",
+      "waLink": "https://wa.me/5531987396336",
+      "instagram": "@consertopanelasbh",
+      "site": "https://conserto-de-panelas-bh.netlify.app/"
+    },
+    "createdAt": "2026-10-25",
+    "generator": "DeepSeek Harness (sessão session-df1765cb-5f95-41a9-ac48-8c3221adfc98)",
+    "sourceWorkspace": "C:\\Users\\samue\\OneDrive\\Área de Trabalho\\panela-precisa-online-main",
+    "purpose": "Pacote autônomo do projeto de marketing agêntico: conversa, estrutura A–G, prompts e material para o orquestrador operar.",
+    "language": "pt-BR",
+    "encoding": "UTF-8 sem BOM; LF"
+  },
+  "readingOrder": [
+    "00-COMECE-AQUI.md",
+    "03-ORQUESTRADOR/PROMPT-ORQUESTRADOR.md",
+    "02-ESTRUTURA-AGENTICA/00-contexto/ficha-negocio.md",
+    "02-ESTRUTURA-AGENTICA/00-contexto/guia-marca-e-tom.md",
+    "02-ESTRUTURA-AGENTICA/00-contexto/roster-e-handoff.md",
+    "02-ESTRUTURA-AGENTICA/C-fluxos-trabalho.md",
+    "03-ORQUESTRADOR/ESTADO-DO-PROJETO.md"
+  ],
+  "agents": [
+    {
+      "code": "maestro",
+      "name": "MAESTRO",
+      "role": "Orquestrador, calendário, aprovação e coerência de marca",
+      "prompt": "02-ESTRUTURA-AGENTICA/B-prompts/01-maestro.md"
+    },
+    {
+      "code": "bussola",
+      "name": "BÚSSOLA",
+      "role": "SEO local, site, Google Meu Negócio, artigos e long-tail",
+      "prompt": "02-ESTRUTURA-AGENTICA/B-prompts/02-seo-google.md"
+    },
+    {
+      "code": "vitrine",
+      "name": "VITRINE",
+      "role": "Instagram: legendas, hashtags, stories, DMs e calendário",
+      "prompt": "02-ESTRUTURA-AGENTICA/B-prompts/03-instagram-manager.md"
+    },
+    {
+      "code": "lente",
+      "name": "LENTE",
+      "role": "Editor de mídia: roteiros de Reels, carrosséis, stories e capas",
+      "prompt": "02-ESTRUTURA-AGENTICA/B-prompts/04-editor-midia.md"
+    },
+    {
+      "code": "oficina",
+      "name": "OFICINA",
+      "role": "Especialista técnico em panelas, diagnóstico por foto e segurança (poder de veto)",
+      "prompt": "02-ESTRUTURA-AGENTICA/B-prompts/05-especialista-panelas.md"
+    }
+  ],
+  "canonicalParameters": {
+    "instagram": "5 posts/semana (rampa de 3 no 1º mês)",
+    "gmb": "1 post/semana (4–5/mês)",
+    "blog": "1 artigo a cada 10 dias (≈3/mês, mínimo 2/mês)",
+    "firstReplySla": "≤30 min no horário comercial",
+    "reviewRequest": "D+1 após a entrega",
+    "approval": "pacote sexta 12h → aprovação segunda 10h",
+    "googleRatingGoal": "5,0 (piso de alerta 4,8)",
+    "ownerTime": "~2h/semana + gravações"
+  },
+  "folders": {
+    "01-CONVERSA": "Histórico da sessão que originou o projeto",
+    "02-ESTRUTURA-AGENTICA": "Pacote operacional (contexto, prompts, calendário, conteúdo, plano, automação)",
+    "03-ORQUESTRADOR": "Instruções e estado para o agente orquestrador",
+    "04-REFERENCIA": "Snapshot do site, inventário de mídia e fontes"
+  },
+  "files": [
+    {
+      "path": "00-COMECE-AQUI.md",
+      "role": "entrada",
+      "description": "Visão geral do projeto, três formas de usar e próximo passo",
+      "bytes": 5561,
+      "sha256": "b7b95e6f351dd9b2a1582220293b1a67e5f09425167e1d13ca50a569b96e8426",
+      "lines": 117
+    },
+    {
+      "path": "01-CONVERSA/conversa-bruta.jsonl.gz",
+      "role": "conversa",
+      "description": "Log original completo da sessão DSH (JSONL comprimido com gzip)",
+      "bytes": 920073,
+      "sha256": "ef9b2414c5c54f2f6361560e3911a3c293c7d645124e65680f017c0f815e3a26"
+    },
+    {
+      "path": "01-CONVERSA/CONVERSA-COMPLETA.md",
+      "role": "conversa",
+      "description": "Transcrição legível da sessão que criou o projeto (3 turnos, ferramentas resumidas)",
+      "bytes": 74411,
+      "sha256": "09ce0d6f11e1408d1648f0b8e5dccc5507c197c48552aaa19b095361df31a481",
+      "lines": 1807
+    },
+    {
+      "path": "01-CONVERSA/RESUMO-E-DECISOES.md",
+      "role": "conversa",
+      "description": "Síntese: linha do tempo, decisões de estratégia/cadência, correções e pendências",
+      "bytes": 6996,
+      "sha256": "7409d4cf5a4d53098a3078628eac796d5b05fad663d76e5bc2ee8ccf6b02bf79",
+      "lines": 135
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/00-contexto/ficha-negocio.md",
+      "role": "contexto",
+      "description": "Fonte única da verdade: fatos, serviços, cidades, keywords e dados faltantes",
+      "bytes": 13314,
+      "sha256": "65952f3983f82650433e217527f3b7777616877f9d98726a0af3b649c12682a1",
+      "lines": 250
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/00-contexto/guia-marca-e-tom.md",
+      "role": "contexto",
+      "description": "Tom de voz, copy, hashtags, identidade visual e exemplos proibidos",
+      "bytes": 9433,
+      "sha256": "92b717ce7c8e8b83db60e57db63cfcb6b80030f43c7f8a21d46fd3b50f00e9e5",
+      "lines": 214
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/00-contexto/roster-e-handoff.md",
+      "role": "contexto",
+      "description": "Time, envelope de handoff, SLAs, precedência e escalonamento",
+      "bytes": 9873,
+      "sha256": "15c0a51ba5a52d905ed271e69f93920a4835868be90adbafdb38f55597a19270",
+      "lines": 207
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/A-analise-estagio-atual.md",
+      "role": "pacote",
+      "description": "Análise do estágio: lacunas P0/P1/P2, funil, quick wins, riscos e scorecard",
+      "bytes": 14408,
+      "sha256": "bfcfe248e678aaa6709df72e072f47d1a8a54658ce12e28ec3069f08585bee23",
+      "lines": 212
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/B-prompts/01-maestro.md",
+      "role": "prompt",
+      "description": "Prompt de sistema do agente MAESTRO (maestro)",
+      "bytes": 19941,
+      "sha256": "535ae0a311715100915f8e6a23839552da6b7c1c67f3fffbcd017e96acc0bc07",
+      "lines": 272,
+      "agent": "maestro"
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/B-prompts/02-seo-google.md",
+      "role": "prompt",
+      "description": "Prompt de sistema do agente BÚSSOLA (bussola)",
+      "bytes": 28239,
+      "sha256": "4a34d0db30fd4b52fc3f48a36068efdda9ad348a1d70005adc47f2d24e7d1a05",
+      "lines": 301,
+      "agent": "bussola"
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/B-prompts/03-instagram-manager.md",
+      "role": "prompt",
+      "description": "Prompt de sistema do agente VITRINE (vitrine)",
+      "bytes": 25091,
+      "sha256": "a3cb5de572d8d500ed00f3f83d0b57b163ba18f5f7ef75a3a5fc39144ae0f808",
+      "lines": 287,
+      "agent": "vitrine"
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/B-prompts/04-editor-midia.md",
+      "role": "prompt",
+      "description": "Prompt de sistema do agente LENTE (lente)",
+      "bytes": 19795,
+      "sha256": "9af1f5919bcc5f7b37fb9465c9a9cb296bfa9b259b3b1c7797c2c1f9c61f2a47",
+      "lines": 279,
+      "agent": "lente"
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/B-prompts/05-especialista-panelas.md",
+      "role": "prompt",
+      "description": "Prompt de sistema do agente OFICINA (oficina)",
+      "bytes": 20027,
+      "sha256": "16a66169965bf992dfd2c0a48e2684372afc97f0b991d9b72d2f8ebb3110a47b",
+      "lines": 274,
+      "agent": "oficina"
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/C-fluxos-trabalho.md",
+      "role": "pacote",
+      "description": "Comunicação entre agentes, envelope de handoff e 4 fluxos completos",
+      "bytes": 20577,
+      "sha256": "733483075cc5f949a8eb91722a153e565a57da4786b86bf7be8e00be9ae3d6b1",
+      "lines": 398
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/COMO-FUNCIONA.md",
+      "role": "pacote",
+      "description": "Explicação leiga da estrutura agêntica para o dono do negócio",
+      "bytes": 9331,
+      "sha256": "306c88adfbcba98fa5ff1402b643d34c190b0eba13df2b8b78870e5b022e3e77",
+      "lines": 133
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/D-calendario-editorial.md",
+      "role": "pacote",
+      "description": "Calendário: semana IG, mês GMB, trimestre SEO, datas sazonais e cadência canônica",
+      "bytes": 28787,
+      "sha256": "ef747cfeb55206da9b3a02f24807dc4bf05f92d7b5ddd12a3f979c3e2067b93a",
+      "lines": 360
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/E-banco-conteudo/01-reels.md",
+      "role": "conteudo",
+      "description": "30 ideias de Reel com roteiro (R01–R30)",
+      "bytes": 33138,
+      "sha256": "edf226a9e4cd09e5efbc27a652e9c8dc72fcff80a1ff161d719809efbd9fc754",
+      "lines": 318
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/E-banco-conteudo/02-carrosseis.md",
+      "role": "conteudo",
+      "description": "20 carrosséis educativos slide a slide (C01–C20)",
+      "bytes": 34312,
+      "sha256": "6dd42fe857e46a7dcc3fc511ac9079d1968029cfc8a40b053c0084bfac1eee26",
+      "lines": 364
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/E-banco-conteudo/03-legendas-antes-depois.md",
+      "role": "conteudo",
+      "description": "15 legendas prontas de antes/depois (L01–L15)",
+      "bytes": 19205,
+      "sha256": "62b6a2f767e4278c8ab0ff48fef1062451703aec74acfd3e3da5a6eafb9e7128",
+      "lines": 283
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/E-banco-conteudo/04-google-meu-negocio.md",
+      "role": "conteudo",
+      "description": "10 posts prontos para o Google Meu Negócio (P1–P10)",
+      "bytes": 18536,
+      "sha256": "7ba51f237f7c482e54f45b7ea9ae979054f7d0a583019fb6760b91f733ed491b",
+      "lines": 335
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/E-banco-conteudo/05-artigos-seo.md",
+      "role": "conteudo",
+      "description": "10 pautas de artigo SEO + 1 artigo modelo completo",
+      "bytes": 34874,
+      "sha256": "bc51c2b74dcf2c2ef9592eb6601daf2108705451c55c0c24b67a37d2a02d064b",
+      "lines": 688
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/ESTRUTURA-AGENTICA-COMPLETA.md",
+      "role": "pacote",
+      "description": "Pacote A–G inteiro em arquivo único com capa e sumário (leitura/impressão)",
+      "bytes": 501546,
+      "sha256": "f46b91efc16fe8762d8aeac70c8a2700d170648ad413cfdd835a8bbf76f7a26b",
+      "lines": 8068
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/F-plano-implementacao.md",
+      "role": "pacote",
+      "description": "Plano 30/60/90 dias, ferramentas e custos, checklist, KPIs e riscos",
+      "bytes": 30000,
+      "sha256": "e55fac3c46a6bf06b9cb7e163aff09f357f1f5ee444fd21b4d70e192db9c2e7e",
+      "lines": 376
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/G-automacao.md",
+      "role": "pacote",
+      "description": "Automação ponta a ponta: stack, Make × n8n × Zapier, automações P0/P1/P2, LGPD",
+      "bytes": 48448,
+      "sha256": "e23117a954a7a115d822ce9717374c94d5a379dc70a20bb3c9f066aa366a1b7f",
+      "lines": 823
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/G-templates-mensagens.md",
+      "role": "pacote",
+      "description": "55 templates de mensagens prontos (WhatsApp, Instagram e Google)",
+      "bytes": 34332,
+      "sha256": "b7e3e9bcbdfece5689762dbf582a6298ffc67effd0d1abb2c41d7f4fa8a6f535",
+      "lines": 967
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/n8n-workflows.json",
+      "role": "pacote",
+      "description": "2 workflows n8n importáveis (formulário → planilha/aviso; lembrete semanal + avaliação)",
+      "bytes": 25687,
+      "sha256": "3fefc91a7a827ad1b34d53e196059e9e448decc0f822555a5e2cda8930e12942",
+      "lines": 567
+    },
+    {
+      "path": "02-ESTRUTURA-AGENTICA/README.md",
+      "role": "pacote",
+      "description": "Índice do pacote operacional, instalação em 20 min, cadência canônica e status",
+      "bytes": 11275,
+      "sha256": "f82d0742e587b51fdaa9f66f256da1cd844e1f2776dfadcec84ee2077c48b2db",
+      "lines": 214
+    },
+    {
+      "path": "03-ORQUESTRADOR/ESTADO-DO-PROJETO.md",
+      "role": "orquestrador",
+      "description": "Status em 25/10/2026, lacunas do site, dados pendentes e próximos passos",
+      "bytes": 7280,
+      "sha256": "8e3891ef126515c85d0a59562c3df3ddf11a0c7a2488ecc45886ceb0882734e2",
+      "lines": 138
+    },
+    {
+      "path": "03-ORQUESTRADOR/MAPA-DO-PROJETO.md",
+      "role": "orquestrador",
+      "description": "Árvore comentada, busca rápida, ordem de leitura por perfil e convenções",
+      "bytes": 8628,
+      "sha256": "c1cdb4f51a50ea7e2c119efcfe9231fa84f7dfde88fe86fe7e180f61e6294dec",
+      "lines": 151
+    },
+    {
+      "path": "03-ORQUESTRADOR/PROMPT-ORQUESTRADOR.md",
+      "role": "orquestrador",
+      "description": "System prompt do agente orquestrador: identidade, protocolo de leitura, regras, operação e formatos de saída",
+      "bytes": 15171,
+      "sha256": "d332393374ee03de635bcf2a0e5846fab7b44582691b867cedafaf916232312d",
+      "lines": 264
+    },
+    {
+      "path": "04-REFERENCIA/FONTES-E-ACESSOS.md",
+      "role": "referencia",
+      "description": "Links, origem de cada dado, checagens e ferramentas citadas",
+      "bytes": 4212,
+      "sha256": "1d7012745d16809b5342690cea15c4ff952deb41b6f78b9ca9727bb45db94ef6",
+      "lines": 76
+    },
+    {
+      "path": "04-REFERENCIA/INVENTARIO-DE-MIDIA.md",
+      "role": "referencia",
+      "description": "31 fotos brutas e 10 imagens do site: caminhos, tamanhos e datas",
+      "bytes": 3901,
+      "sha256": "e5fc2c4526bea7e84001c837ec99d608e471638e6e3f8610b2880b29a8a5643b",
+      "lines": 59
+    },
+    {
+      "path": "04-REFERENCIA/SITE-ATUAL/index.html",
+      "role": "referencia",
+      "description": "Snapshot do HTML do site publicado (22/10/2026)",
+      "bytes": 30138,
+      "sha256": "1aacc489e42bbac8778632a167817256f7675a63bd7421405b1f007acf94352f",
+      "lines": 470
+    },
+    {
+      "path": "04-REFERENCIA/SITE-ATUAL/script.js",
+      "role": "referencia",
+      "description": "Snapshot do JavaScript do site publicado",
+      "bytes": 14847,
+      "sha256": "6dcff0fcc8ea71027dad6390cf3c89652a809872e897cde8ab8b7d698d98ac0e",
+      "lines": 293
+    },
+    {
+      "path": "04-REFERENCIA/SITE-ATUAL/style.css",
+      "role": "referencia",
+      "description": "Snapshot do CSS do site publicado",
+      "bytes": 33321,
+      "sha256": "c17e2332acd493e0b12bc2c4ed798fb2c415941ab6f4cd3c7b0cd81db109de63",
+      "lines": 412
+    }
+  ]
+}

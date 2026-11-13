@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Conserto de Panelas em BH e Grande BH | Pressão, Panelas em Geral e Polimento</title>
+  <meta name="description" content="Conserto, limpeza e polimento de panelas de pressão e panelas em geral em Belo Horizonte e toda a Grande BH. Nota 5,0 no Google. Orçamento pelo WhatsApp e entrega por Uber." />
+  <meta name="theme-color" content="#06142b" />
+  <link rel="canonical" href="https://conserto-de-panelas-bh.netlify.app/" />
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:title" content="Conserto de Panelas em BH e Grande BH" />
+  <meta property="og:description" content="Sua panela como nova. Nota 5,0 no Google. Orçamento pelo WhatsApp." />
+  <meta property="og:image" content="https://conserto-de-panelas-bh.netlify.app/img/og.jpg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>document.documentElement.classList.add("js")</script>
+  <link rel="stylesheet" href="style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Conserto de Panelas em Geral",
+    "description": "Conserto, limpeza e polimento de panelas de pressão e panelas em geral em Belo Horizonte e Grande BH.",
+    "telephone": "+55-31-98739-6336",
+    "image": "img/og.jpg",
+    "priceRange": "$",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Rua Jornalista Abrahão Sadi Saad, 436 - Belmonte",
+      "addressLocality": "Belo Horizonte",
+      "addressRegion": "MG",
+      "postalCode": "31870-010",
+      "addressCountry": "BR"
+    },
+    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5.0", "reviewCount": "31" },
+    "sameAs": ["https://www.instagram.com/consertopanelasbh/"],
+    "areaServed": [
+      { "@type": "City", "name": "Belo Horizonte" }, { "@type": "City", "name": "Contagem" },
+      { "@type": "City", "name": "Betim" }, { "@type": "City", "name": "Ribeirão das Neves" },
+      { "@type": "City", "name": "Santa Luzia" }, { "@type": "City", "name": "Sabará" },
+      { "@type": "City", "name": "Nova Lima" }, { "@type": "City", "name": "Ibirité" },
+      { "@type": "City", "name": "Vespasiano" }, { "@type": "City", "name": "Lagoa Santa" }
+    ],
+    "openingHoursSpecification": [
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "08:00", "closes": "18:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "08:00", "closes": "13:00" }
+    ]
+  }
+  </script>
+</head>
+<body>
+<div class="progresso" id="progresso" aria-hidden="true"></div>
+
+<header class="topo" id="topo">
+  <div class="wrap topo__in">
+    <a href="#inicio" class="marca" aria-label="Conserto de Panelas BH, início">
+      <img src="logo.svg" alt="" width="40" height="40" />
+      <span class="marca__txt"><strong>Conserto de Panelas</strong><small>Belo Horizonte e região</small></span>
+    </a>
+    <nav class="menu" id="menu" aria-label="Seções">
+      <a href="#diagnostico">Diagnóstico</a>
+      <a href="#servicos">Serviços</a>
+      <a href="#resultados">Antes e depois</a>
+      <a href="#empresas">Restaurantes</a>
+      <a href="#orcamento">Orçamento</a>
+      <a href="#contato">Contato</a>
+    </nav>
+    <a class="btn btn--vidro btn--sm" href="tel:+5531987396336" data-ligar>Ligar</a>
+    <a class="btn btn--whats btn--sm js-whats" data-msg="Olá! Vim pelo site e gostaria de um orçamento." href="#">WhatsApp</a>
+    <button class="menu-btn" id="menuBtn" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<main>
+
+<!-- INÍCIO -->
+<section id="inicio" class="hero">
+  <div class="hero__fundo" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="wrap hero__in">
+    <div class="hero__texto">
+      <p class="selo"><span class="ponto"></span> Atendemos toda a Grande BH</p>
+      <h1>Sua panela<br /><span class="troca" id="troca">de pressão</span><br /><em>como nova.</em></h1>
+      <p class="hero__sub">Conserto, limpeza pesada e polimento. Mande uma foto no WhatsApp e receba o orçamento sem sair de casa. A gente busca e entrega por Uber.</p>
+      <div class="hero__acoes">
+        <a class="btn btn--whats btn--grande js-whats" data-msg="Olá! Vim pelo site e gostaria de um orçamento para conserto de panela." href="#">
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-whats"/></svg>
+          Pedir orçamento agora
+        </a>
+        <a class="btn btn--vidro btn--grande" href="tel:+5531987396336" data-ligar><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.250.2 2.450.57 3.600a1 1 0 0 1-.25 1Z"/></svg>Ligar: (31) 98739-6336</a>
+      </div>
+      <p class="hero__link"><a href="#diagnostico">Não sabe o que sua panela precisa? Faça o diagnóstico rápido →</a></p>
+      <ul class="hero__provas">
+        <li><b>5,0</b><span class="estrelas" aria-hidden="true">★★★★★</span> no Google</li>
+        <li>31 avaliações reais</li>
+        <li>Garantia no serviço</li>
+      </ul>
+    </div>
+    <aside class="hero__card" aria-label="Orçamento rápido">
+      <p class="hero__card-topo"><span class="estrelas" aria-hidden="true">★★★★★</span> <b>5,0</b> no Google · 31 avaliações</p>
+      <h2>Orçamento em 3 passos</h2>
+      <ol class="hero__passos">
+        <li><b>1</b><span>Mande uma foto da panela no WhatsApp</span></li>
+        <li><b>2</b><span>Receba o valor antes de mexer em qualquer coisa</span></li>
+        <li><b>3</b><span>Panela pronta, buscamos e entregamos por Uber</span></li>
+      </ol>
+      <a class="btn btn--whats btn--bloco js-whats" data-msg="Olá! Vim pelo site e gostaria de um orçamento para conserto de panela." href="#">Chamar no WhatsApp</a>
+      <div class="hero__card-links">
+        <a href="tel:+5531987396336">Ligar agora</a>
+        <a href="#orcamento">Enviar fotos pelo site</a>
+      </div>
+    </aside>
+  </div>
+  <svg class="onda" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 60V28c240 28 480 32 720 14S1200 4 1440 24v36Z" fill="var(--fundo)"/></svg>
+</section>
+
+<!-- FAIXA -->
+<div class="faixa" aria-hidden="true">
+  <div class="faixa__trilho">
+    <span>Panela de pressão</span><span>Panela comum</span><span>Polimento</span><span>Limpeza pesada</span><span>Troca de borracha e válvula</span><span>Cabos e alças</span><span>Fundo empenado</span><span>Restaurantes e bares</span>
+    <span>Panela de pressão</span><span>Panela comum</span><span>Polimento</span><span>Limpeza pesada</span><span>Troca de borracha e válvula</span><span>Cabos e alças</span><span>Fundo empenado</span><span>Restaurantes e bares</span>
+  </div>
+</div>
+
+<!-- NÚMEROS -->
+<section class="numeros">
+  <div class="wrap numeros__in">
+    <div class="num" data-reveal><b class="contar" data-alvo="5.0" data-dec="1">0</b><span>nota no Google</span></div>
+    <div class="num" data-reveal><b class="contar" data-alvo="31">0</b><span>avaliações de clientes</span></div>
+    <div class="num" data-reveal><b>3 passos</b><span>foto, orçamento, panela pronta</span></div>
+    <div class="num" data-reveal><b>Uber</b><span>buscamos e entregamos</span></div>
+  </div>
+</section>
+
+<!-- DIAGNÓSTICO -->
+<section id="diagnostico" class="secao">
+  <div class="wrap">
+    <header class="secao__cab" data-reveal>
+      <p class="sobre">Diagnóstico rápido</p>
+      <h2>O que aconteceu com a sua panela?</h2>
+      <p>Toque no que está acontecendo. Você pode escolher mais de uma opção.</p>
+    </header>
+
+    <div class="diag" data-reveal>
+      <div class="diag__chips" id="diagChips" role="group" aria-label="Problemas da panela">
+        <button type="button" class="opcao" data-id="pressao" aria-pressed="false">Não pega pressão</button>
+        <button type="button" class="opcao" data-id="vazando" aria-pressed="false">Vaza vapor pela tampa</button>
+        <button type="button" class="opcao" data-id="cabo" aria-pressed="false">Cabo ou alça solta ou quebrada</button>
+        <button type="button" class="opcao" data-id="queimada" aria-pressed="false">Queimada ou cheia de crosta</button>
+        <button type="button" class="opcao" data-id="brilho" aria-pressed="false">Perdeu o brilho</button>
+        <button type="button" class="opcao" data-id="fundo" aria-pressed="false">Fundo torto, empenado ou furado</button>
+        <button type="button" class="opcao" data-id="industrial" aria-pressed="false">É panela de restaurante</button>
+        <button type="button" class="opcao" data-id="outro" aria-pressed="false">Outro problema</button>
+      </div>
+      <div class="diag__resultado" id="diagRes" aria-live="polite">
+        <div class="diag__vazio" id="diagVazio">
+          <svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-panela"/></svg>
+          <p>Escolha o que está acontecendo e eu mostro o serviço mais provável e já monto a mensagem para o WhatsApp.</p>
+        </div>
+        <div id="diagLista" class="diag__lista" hidden></div>
+        <a class="btn btn--whats btn--bloco js-diag" id="diagBtn" href="#" hidden>Enviar esse diagnóstico no WhatsApp</a>
+        <p class="diag__nota" id="diagNota" hidden>Isso é uma indicação. Com a foto no WhatsApp a gente confirma o serviço e o valor antes de mexer em qualquer coisa.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVIÇOS -->
+<section id="servicos" class="secao secao--gelo">
+  <div class="wrap">
+    <header class="secao__cab" data-reveal>
+      <p class="sobre">O que fazemos</p>
+      <h2>Serviços</h2>
+      <p>Panelas de casa e de restaurante, de todas as marcas.</p>
+    </header>
+    <div class="servicos">
+      <article class="servico" data-reveal>
+        <button class="servico__foto" type="button" data-zoom="img/pressao.webp" data-leg="Panela de pressão revisada, polida e com válvula nova" aria-label="Ampliar foto: panela de pressão">
+          <img src="img/pressao.webp" alt="Panela de pressão revisada e polida" loading="lazy" width="1000" height="800" />
+        </button>
+        <div class="servico__corpo">
+          <h3>Panela de pressão</h3>
+          <p>Troca de borracha, válvula, pino de segurança, cabo e alça. Revisão completa e teste de vedação.</p>
+          <a class="link-seta js-whats" data-msg="Olá! Quero um orçamento para conserto de panela de pressão." href="#">Pedir orçamento</a>
+        </div>
+      </article>
+      <article class="servico" data-reveal>
+        <button class="servico__foto" type="button" data-zoom="img/inox.webp" data-leg="Panela de inox com polimento espelhado" aria-label="Ampliar foto: polimento em inox">
+          <img src="img/inox.webp" alt="Panela de inox com polimento espelhado" loading="lazy" width="1000" height="800" />
+        </button>
+        <div class="servico__corpo">
+          <h3>Polimento e limpeza</h3>
+          <p>Tira crosta, gordura queimada e oxidação. Alumínio e inox voltam a brilhar como no primeiro dia.</p>
+          <a class="link-seta js-whats" data-msg="Olá! Quero um orçamento para polimento e limpeza de panelas." href="#">Pedir orçamento</a>
+        </div>
+      </article>
+      <article class="servico" data-reveal>
+        <button class="servico__foto" type="button" data-zoom="img/cabo-quebrado.webp" data-leg="Panela de pressão com cabo quebrado, antes da troca" aria-label="Ampliar foto: cabo quebrado">
+          <img src="img/cabo-quebrado.webp" alt="Panela de pressão com cabo quebrado" loading="lazy" width="800" height="800" />
+        </button>
+        <div class="servico__corpo">
+          <h3>Cabos, alças e peças</h3>
+          <p>Cabo quebrado, alça solta, tampa que não veda, rebite frouxo. Troca de peças e reparo na hora de orçar.</p>
+          <a class="link-seta js-whats" data-msg="Olá! Minha panela está com cabo ou alça com problema. Pode me orçar?" href="#">Pedir orçamento</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ANTES E DEPOIS -->
+<section id="resultados" class="secao">
+  <div class="wrap">
+    <header class="secao__cab" data-reveal>
+      <p class="sobre">Resultados reais</p>
+      <h2>Antes e depois</h2>
+      <p>Trabalhos feitos na nossa oficina. Toque em Antes e Depois para comparar.</p>
+    </header>
+
+    <div class="ab" id="ab" data-reveal>
+      <div class="ab__palco" id="abPalco">
+        <img class="ab__img" id="abAntes" src="img/antes-1.webp" alt="Panela antes do serviço" width="1200" height="900" />
+        <img class="ab__img ab__img--depois" id="abDepois" src="img/depois-1.webp" alt="Panela depois do serviço" width="1200" height="900" />
+        <span class="ab__rotulo" id="abRotulo" aria-hidden="true">Antes</span>
+      </div>
+      <div class="ab__lado">
+        <div class="seg" role="group" aria-label="Ver antes ou depois">
+          <button type="button" id="segAntes" aria-pressed="true">Antes</button>
+          <button type="button" id="segDepois" aria-pressed="false">Depois</button>
+        </div>
+        <h3 id="abTitulo">Da fuligem ao brilho</h3>
+        <p id="abTexto">Alumínio com anos de fuligem e gordura queimada, limpo e polido por inteiro.</p>
+        <div class="ab__minis" id="abMinis" role="group" aria-label="Escolher trabalho">
+          <button type="button" class="mini" data-i="0" aria-pressed="true"><img src="img/depois-1.webp" alt="" loading="lazy" /><span>Panela escura</span></button>
+          <button type="button" class="mini" data-i="1" aria-pressed="false"><img src="img/depois-2.webp" alt="" loading="lazy" /><span>Caldeirão de pés</span></button>
+          <button type="button" class="mini" data-i="2" aria-pressed="false"><img src="img/depois-3.webp" alt="" loading="lazy" /><span>Panela escurecida</span></button>
+        </div>
+        <a class="btn btn--whats js-whats" data-msg="Olá! Vi os antes e depois no site e quero um orçamento para minha panela." href="#">Quero a minha assim</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EMPRESAS -->
+<section id="empresas" class="empresas">
+  <div class="empresas__bg" aria-hidden="true"></div>
+  <div class="wrap empresas__in">
+    <div data-reveal>
+      <p class="sobre sobre--claro">Para restaurantes, bares, padarias e cozinhas industriais</p>
+      <h2>Panela parada é cozinha parada</h2>
+      <p class="empresas__sub">Cuidamos da manutenção e da limpeza pesada das panelas do seu negócio, em qualquer bairro ou cidade da Grande BH. Atendimento de parceiro, com prioridade.</p>
+      <ul class="beneficios">
+        <li><span class="bi">1</span><div><h3>Manutenção programada</h3><p>Revisão de cabos, alças, válvulas e borrachas antes de dar problema.</p></div></li>
+        <li><span class="bi">2</span><div><h3>Limpeza pesada</h3><p>Remoção de crosta e gordura carbonizada de caldeirões e panelões.</p></div></li>
+        <li><span class="bi">3</span><div><h3>Busca e entrega</h3><p>A gente pega e devolve por Uber, para sua cozinha não parar.</p></div></li>
+        <li><span class="bi">4</span><div><h3>Condição de parceiro</h3><p>Preço especial para volume e contrato mensal.</p></div></li>
+      </ul>
+    </div>
+    <form class="cartao-form cartao-form--claro" id="formEmpresa" novalidate data-reveal>
+      <h3>Peça uma proposta</h3>
+      <p class="form__ajuda">Resposta pelo WhatsApp, sem compromisso.</p>
+      <fieldset class="tipos">
+        <legend>Tipo de negócio</legend>
+        <label><input type="radio" name="tipo" value="Restaurante" checked /><span>Restaurante</span></label>
+        <label><input type="radio" name="tipo" value="Bar ou lanchonete" /><span>Bar ou lanchonete</span></label>
+        <label><input type="radio" name="tipo" value="Padaria ou confeitaria" /><span>Padaria</span></label>
+        <label><input type="radio" name="tipo" value="Cozinha industrial ou rede" /><span>Rede ou industrial</span></label>
+      </fieldset>
+      <label>Nome do estabelecimento<input name="estabelecimento" required autocomplete="organization" /></label>
+      <div class="duas">
+        <label>Seu nome<input name="nome" required autocomplete="name" /></label>
+        <label>Bairro ou cidade<input name="bairro" required placeholder="Ex: Savassi, Contagem" /></label>
+      </div>
+      <label>Quantas panelas, mais ou menos?
+        <select name="qtd" required>
+          <option value="">Escolha</option><option>Até 10</option><option>10 a 30</option><option>Mais de 30</option><option>Rede com várias unidades</option>
+        </select>
+      </label>
+      <p class="form__erro" role="alert" hidden>Preencha todos os campos, por favor.</p>
+      <button class="btn btn--whats btn--bloco" type="submit">Enviar pelo WhatsApp</button>
+    </form>
+  </div>
+</section>
+
+<!-- AVALIAÇÕES -->
+<section id="avaliacoes" class="secao">
+  <div class="wrap">
+    <header class="secao__cab" data-reveal>
+      <p class="sobre">Avaliações no Google</p>
+      <h2>Quem já consertou, recomenda</h2>
+      <p class="nota"><b>5,0</b><span class="estrelas" aria-hidden="true">★★★★★</span><span>31 avaliações</span></p>
+    </header>
+
+    <div class="carrossel" id="carrossel" data-reveal>
+      <div class="carrossel__trilho" id="trilho" tabindex="0" aria-label="Avaliações de clientes">
+        <blockquote class="avaliacao"><div class="estrelas" aria-label="5 estrelas">★★★★★</div><p>Levei minha panela de pressão para conserto e fui muito bem atendida. O profissional foi atencioso, explicou o problema com clareza e fez o reparo rapidamente.</p><footer><span class="avatar">R</span>Rafaela Cerqueira</footer></blockquote>
+        <blockquote class="avaliacao"><div class="estrelas" aria-label="5 estrelas">★★★★★</div><p>Excelente profissional! Serviço de muita qualidade, rapidez e eficiência! Minhas panelas ficaram perfeitas! E têm um ótimo custo/benefício.</p><footer><span class="avatar">S</span>Soraia Melo</footer></blockquote>
+        <blockquote class="avaliacao"><div class="estrelas" aria-label="5 estrelas">★★★★★</div><p>Serviço ágil, de qualidade, boa precificação, e extremo cuidado!!! Super recomendo.</p><footer><span class="avatar">A</span>Adriane Paz</footer></blockquote>
+        <blockquote class="avaliacao"><div class="estrelas" aria-label="5 estrelas">★★★★★</div><p>Gostei muito do serviço feito na panela aqui em casa. Super recomendo os serviços dele. Podem chamar ele que não irão se arrepender.</p><footer><span class="avatar">M</span>Marcelo Nunes</footer></blockquote>
+      </div>
+      <div class="carrossel__ctrl">
+        <button type="button" class="seta" id="prev" aria-label="Avaliação anterior">‹</button>
+        <div class="pontos" id="pontos"></div>
+        <button type="button" class="seta" id="next" aria-label="Próxima avaliação">›</button>
+      </div>
+    </div>
+    <p class="centro"><a class="btn btn--linha" id="linkGoogle" href="#" target="_blank" rel="noopener">Ver todas no Google</a></p>
+  </div>
+</section>
+
+<!-- QUEM FAZ -->
+<section class="quem">
+  <div class="wrap quem__in quem__in--solo">
+    <div data-reveal>
+      <p class="sobre">Quem cuida da sua panela</p>
+      <h2>Cada panela passa pelas mãos de quem entende</h2>
+      <p>Aqui não tem fila de máquina. Sua panela é aberta, avaliada, consertada e polida na bancada, com cuidado e com os equipamentos de segurança.</p>
+      <ul class="checks">
+        <li>Orçamento antes de mexer em qualquer coisa</li>
+        <li>Preço justo, combinado pelo WhatsApp</li>
+        <li>Garantia no serviço</li>
+        <li>Prazo cumprido e panela entregue limpa</li>
+      </ul>
+      <a class="btn btn--whats js-whats" data-msg="Olá! Vim pelo site e quero falar sobre minha panela." href="#">Falar com a oficina</a>
+    </div>
+  </div>
+</section>
+
+<!-- REGIÃO -->
+<section id="regiao" class="secao secao--gelo">
+  <div class="wrap">
+    <header class="secao__cab" data-reveal>
+      <p class="sobre">Onde atendemos</p>
+      <h2>Toda a Grande Belo Horizonte</h2>
+      <p>Toque na sua cidade para avisar a oficina. Buscamos e entregamos por Uber.</p>
+    </header>
+    <div class="cidades" id="cidades" data-reveal>
+      <button type="button" class="cidade cidade--bh" data-c="Belo Horizonte">Belo Horizonte</button>
+      <button type="button" class="cidade" data-c="Contagem">Contagem</button>
+      <button type="button" class="cidade" data-c="Betim">Betim</button>
+      <button type="button" class="cidade" data-c="Ribeirão das Neves">Ribeirão das Neves</button>
+      <button type="button" class="cidade" data-c="Santa Luzia">Santa Luzia</button>
+      <button type="button" class="cidade" data-c="Sabará">Sabará</button>
+      <button type="button" class="cidade" data-c="Nova Lima">Nova Lima</button>
+      <button type="button" class="cidade" data-c="Ibirité">Ibirité</button>
+      <button type="button" class="cidade" data-c="Vespasiano">Vespasiano</button>
+      <button type="button" class="cidade" data-c="Lagoa Santa">Lagoa Santa</button>
+      <button type="button" class="cidade" data-c="Sarzedo">Sarzedo</button>
+      <button type="button" class="cidade" data-c="Esmeraldas">Esmeraldas</button>
+      <button type="button" class="cidade" data-c="Pedro Leopoldo">Pedro Leopoldo</button>
+      <button type="button" class="cidade" data-c="Caeté">Caeté</button>
+      <button type="button" class="cidade" data-c="Mateus Leme">Mateus Leme</button>
+      <button type="button" class="cidade" data-c="Brumadinho">Brumadinho</button>
+      <button type="button" class="cidade cidade--outra" data-c="outra cidade da região">Outra cidade</button>
+    </div>
+  </div>
+</section>
+
+<!-- ORÇAMENTO -->
+<section id="orcamento" class="secao">
+  <div class="wrap estreito">
+    <header class="secao__cab" data-reveal>
+      <p class="sobre">Orçamento sem compromisso</p>
+      <h2>Conte o que aconteceu com a sua panela</h2>
+      <p>Ao enviar, o WhatsApp abre com a mensagem pronta. Depois é só anexar as fotos (uma de lado e uma do fundo).</p>
+    </header>
+    <div class="rapido" data-reveal>
+      <a class="btn btn--whats btn--grande js-whats" data-msg="Olá! Vim pelo site e gostaria de um orçamento." href="#"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-whats"/></svg>Chamar no WhatsApp</a>
+      <a class="btn btn--grande" href="tel:+5531987396336" data-ligar><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.250.2 2.450.57 3.600a1 1 0 0 1-.25 1Z"/></svg>Ligar agora</a>
+    </div>
+    <p class="ou" data-reveal><span>ou preencha o formulário</span></p>
+    <form class="cartao-form" id="formOrcamento" name="orcamento" method="POST" enctype="multipart/form-data" data-netlify="true" netlify-honeypot="campo-falso" novalidate data-reveal>
+      <input type="hidden" name="form-name" value="orcamento" />
+      <input type="file" name="foto1" accept="image/*" hidden /><input type="file" name="foto2" accept="image/*" hidden /><input type="file" name="foto3" accept="image/*" hidden />
+      <p class="oculto" aria-hidden="true"><label>Não preencha: <input name="campo-falso" tabindex="-1" autocomplete="off" /></label></p>
+      <div class="duas">
+        <label>Seu nome<input name="nome" required autocomplete="name" /></label>
+        <label>Bairro ou cidade<input name="bairro" required placeholder="Ex: Belmonte, Contagem" /></label>
+      </div>
+      <label>Tipo de panela
+        <select name="tipo" required>
+          <option value="">Escolha</option><option>Panela de pressão</option><option>Panela comum ou frigideira</option><option>Panela industrial ou caldeirão</option><option>Fritadeira</option><option>Outro</option>
+        </select>
+      </label>
+      <label>Qual o problema?<textarea name="problema" rows="4" required placeholder="Ex: não pega pressão, cabo solto, muito queimada, perdeu o brilho..."></textarea></label>
+      <div class="foto-campo">
+        <span class="foto-campo__rotulo">Fotos da panela <small>(opcional, até 3)</small></span>
+        <input type="file" id="fotoInput" accept="image/*" multiple hidden />
+        <button type="button" class="foto-add" id="fotoAdd">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 3 7.2 5H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3.200L15 3H9Zm3 5.500A4.500 4.500 0 1 1 12 17.500 4.500 4.500 0 0 1 12 8.500Zm0 2A2.500 2.500 0 1 0 12 15.500 2.500 2.500 0 0 0 12 10.500Z"/></svg>
+          <span>Tirar foto ou escolher da galeria</span>
+        </button>
+        <p class="foto-dica">Uma foto de lado e uma do fundo da panela ajudam no orçamento.</p>
+        <div class="foto-lista" id="fotoLista"></div>
+      </div>
+      <label class="check"><input type="checkbox" name="uber" /> <span>Quero que busquem e entreguem por Uber</span></label>
+      <p class="form__erro" role="alert" hidden>Preencha todos os campos, por favor.</p>
+      <button class="btn btn--whats btn--bloco btn--grande" type="submit">Enviar pelo WhatsApp</button>
+    </form>
+  </div>
+</section>
+
+<!-- CONTATO -->
+<section id="contato" class="secao secao--gelo">
+  <div class="wrap contato">
+    <div data-reveal>
+      <header class="secao__cab secao__cab--esq">
+        <p class="sobre">Onde estamos</p>
+        <h2>Oficina no Belmonte, em BH</h2>
+      </header>
+      <dl class="dados">
+        <div><dt>Endereço</dt><dd>Rua Jornalista Abrahão Sadi Saad, 436<br />Belmonte, Belo Horizonte - MG, 31870-010</dd></div>
+        <div><dt>Horário</dt><dd>Segunda a sexta, 8h às 18h<br />Sábado, 8h às 13h</dd></div>
+        <div><dt>Telefone e WhatsApp</dt><dd><a href="tel:+5531987396336" data-ligar>(31) 98739-6336</a></dd></div>
+        <div><dt>Instagram</dt><dd><a href="https://www.instagram.com/consertopanelasbh/" target="_blank" rel="noopener">@consertopanelasbh</a></dd></div>
+      </dl>
+      <div class="contato__acoes"><a class="btn btn--whats js-whats" data-msg="Olá! Vim pelo site." href="#">Chamar no WhatsApp</a><a class="btn" href="tel:+5531987396336" data-ligar>Ligar</a>
+      <a class="btn btn--linha" href="https://www.google.com/maps/dir/?api=1&destination=Rua+Jornalista+Abrah%C3%A3o+Sadi+Saad%2C+436%2C+Belmonte%2C+Belo+Horizonte+MG" target="_blank" rel="noopener">Como chegar</a></div>
+    </div>
+    <div class="mapa" data-reveal>
+      <a class="mapa__card" href="https://www.google.com/maps/search/?api=1&query=Rua+Jornalista+Abrah%C3%A3o+Sadi+Saad%2C+436%2C+Belmonte%2C+Belo+Horizonte+MG" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.500a2.5 2.5 0 0 1 0 5Z"/></svg>
+        <strong>Abrir no Google Maps</strong>
+        <span>Rua Jornalista Abrahão Sadi Saad, 436<br />Belmonte, Belo Horizonte</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="rodape">
+  <div class="wrap rodape__in">
+    <span class="rodape__marca"><img src="logo.svg" alt="" width="28" height="28" /> Conserto de Panelas em Geral · Belo Horizonte e Grande BH</span>
+    <span>© <span id="ano"></span> · <a href="https://www.instagram.com/consertopanelasbh/" target="_blank" rel="noopener">Instagram</a></span>
+  </div>
+</footer>
+
+<!-- Barra fixa no celular + botão flutuante -->
+<a class="whats-flutuante js-whats" data-msg="Olá! Vim pelo site e gostaria de um orçamento." href="#" aria-label="Falar no WhatsApp">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-whats"/></svg>
+</a>
+
+<!-- Barra fixa no celular -->
+<div class="barra-fixa" role="region" aria-label="Contato rápido">
+  <a class="btn btn--whats js-whats" data-msg="Olá! Vim pelo site e gostaria de um orçamento." href="#"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-whats"/></svg>Chamar</a>
+  <a class="btn" href="tel:+5531987396336" data-ligar><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.250.2 2.450.57 3.600a1 1 0 0 1-.25 1Z"/></svg>Ligar</a>
+</div>
+
+<!-- Ampliar foto -->
+<dialog class="zoom" id="zoom">
+  <button type="button" class="zoom__x" id="zoomX" aria-label="Fechar">×</button>
+  <img id="zoomImg" alt="" />
+  <p id="zoomLeg"></p>
+</dialog>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-whats" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></symbol>
+  <symbol id="i-panela" viewBox="0 0 64 64"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 28Q32 14 50 28Z"/><path d="M12 28h40M17 28v16q0 8 8 8h14q8 0 8-8V28M8 34h9M47 34h9M29 16h6"/></g></symbol>
+</svg>
+
+<script src="script.js"></script>
+</body>
+</html>

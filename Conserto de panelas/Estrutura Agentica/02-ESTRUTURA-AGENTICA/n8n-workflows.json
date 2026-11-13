@@ -1,0 +1,566 @@
+[
+  {
+    "name": "P0-1 Netlify Forms → Google Sheets + Telegram",
+    "nodes": [
+      {
+        "parameters": {
+          "content": "## P0-1 · Netlify Forms → CRM + Telegram\n\n**O que faz:** recebe o webhook da Netlify quando alguém envia o formulário `orcamento` do site, normaliza o lead, grava na planilha CRM e avisa o dono no Telegram.\n\n**Tratamento das fotos:** a Netlify entrega o upload como **URL**, não como arquivo. Este fluxo guarda os links na coluna `fotos` e manda os links no alerta — a foto abre direto no celular. Nada é baixado nem armazenado em servidor.\n\n**Urgência:** se o cliente pediu Uber ou é restaurante/industrial, o alerta sai como URGENTE.\n\n**Responsável humano:** quem responde é o dono, com o template T03 de `G-templates-mensagens.md`. Preço e prazo NUNCA são automáticos.",
+          "height": 420,
+          "width": 440,
+          "color": 4
+        },
+        "id": "11111111-1111-4111-8111-111111111108",
+        "name": "Sticky — O que este fluxo faz",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [-700, -80]
+      },
+      {
+        "parameters": {
+          "content": "## COMO CONFIGURAR (5 passos)\n\n1. **Netlify** → Site configuration → Forms → Form notifications → Add notification → **Outgoing webhook** → evento `New form submission` → cole a URL de produção do Webhook abaixo (`https://SEU-N8N/webhook/netlify-orcamento`).\n2. **Telegram:** fale com o `@BotFather`, crie um bot, copie o token para uma credencial do n8n. Descubra o `chat_id` em `https://api.telegram.org/botTOKEN/getUpdates`.\n3. **Google Sheets:** crie a planilha CRM (abas `leads`, `b2b`, `relatorios`), selecione a credencial no nó e troque `COLE_ID_DA_PLANILHA_CRM` e `COLE_CRM_ABA_LEADS`.\n4. A aba `leads` precisa ter as colunas: id_lead, data_hora, nome, whatsapp, cidade_bairro, tipo_panela, problema, fotos, qtd_fotos, uber, origem, prioridade, status.\n5. **Teste de verdade:** envie o formulário do site publicado e confira se a linha entrou e se o alerta chegou no celular.\n\n> Todos os campos `COLE_...` são placeholders. Nenhuma credencial real está neste arquivo.",
+          "height": 460,
+          "width": 440,
+          "color": 5
+        },
+        "id": "11111111-1111-4111-8111-111111111109",
+        "name": "Sticky — Como configurar",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [-700, 380]
+      },
+      {
+        "parameters": {
+          "content": "## Alternativa: WhatsApp no lugar do Telegram\n\nO nó laranja abaixo está **desativado**. Ele serve para quem prefere receber o alerta no WhatsApp via **Evolution API** (API não oficial).\n\n- Use **número secundário**, nunca o (31) 98739-6336 — API não oficial no número principal pode derrubar a conta.\n- Se ativar este nó, **desative os dois nós de Telegram** para não receber tudo dobrado.\n- Coloque a URL da sua Evolution, a instância, a apikey e o seu número secundário nos campos `COLE_...`.\n\nLeia `G-automacao.md` §11 (Riscos) antes de ativar.",
+          "height": 380,
+          "width": 400,
+          "color": 3
+        },
+        "id": "11111111-1111-4111-8111-111111111110",
+        "name": "Sticky — Alternativa WhatsApp",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [1240, -60]
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "netlify-orcamento",
+          "responseMode": "onReceived",
+          "options": {}
+        },
+        "id": "11111111-1111-4111-8111-111111111101",
+        "name": "Webhook — Netlify Forms",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [0, 320],
+        "webhookId": "netlify-orcamento-panela"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "// Normaliza o payload da Netlify Forms em 1 linha de CRM.\n// A Netlify manda { headers, params, query, body } e o formulario vem dentro de body.\nconst entrada = $input.first().json;\nconst bruto = entrada.body || entrada;\nconst d = (bruto.data && typeof bruto.data === 'object') ? bruto.data : bruto;\n\nconst texto = (v) => {\n  if (v === undefined || v === null) return '';\n  if (Array.isArray(v)) return v.map(String).join(' | ');\n  if (typeof v === 'object') return JSON.stringify(v);\n  return String(v).trim();\n};\n\n// Fotos chegam como URL do CDN da Netlify. Guardamos os links, nao o arquivo.\nconst fotos = ['foto1', 'foto2', 'foto3']\n  .map((k) => texto(d[k]))\n  .filter((u) => u.indexOf('http') === 0);\n\nconst tipo = texto(d.tipo) || texto(d.tipo_panela);\nconst uberBruto = texto(d.uber).toLowerCase();\nconst querUber = ['on', 'sim', 'true', '1', 'yes'].indexOf(uberBruto) !== -1;\nconst tipoMin = tipo.toLowerCase();\nconst ehB2B = ['industrial', 'restaurante', 'bar', 'padaria', 'rede', 'cozinha']\n  .some((p) => tipoMin.indexOf(p) !== -1);\n\nconst agora = new Date();\nconst dia = agora.toISOString().slice(0, 10).replace(/-/g, '');\nconst idLead = 'WEB-' + dia + '-' + String(Math.floor(Math.random() * 900) + 100);\nconst prioridade = (querUber || ehB2B) ? 'urgente' : 'normal';\nconst formName = texto(bruto.form_name) || texto(entrada.form_name);\n\nreturn [{\n  json: {\n    id_lead: idLead,\n    data_hora: agora.toISOString(),\n    nome: texto(d.nome),\n    whatsapp: texto(d.whatsapp) || texto(d.telefone),\n    cidade_bairro: texto(d.bairro) || texto(d.cidade),\n    tipo_panela: tipo,\n    problema: texto(d.problema),\n    fotos: fotos.join('; '),\n    qtd_fotos: fotos.length,\n    uber: querUber ? 'sim' : 'nao',\n    origem: formName === 'empresa' ? 'site-b2b' : 'site',\n    prioridade: prioridade,\n    status: 'novo'\n  }\n}];"
+        },
+        "id": "11111111-1111-4111-8111-111111111102",
+        "name": "Normalizar lead",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [260, 320]
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "COLE_ID_DA_PLANILHA_CRM",
+            "mode": "id"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "COLE_CRM_ABA_LEADS",
+            "mode": "name"
+          },
+          "columns": {
+            "mappingMode": "autoMapInputData",
+            "value": {},
+            "matchingColumns": [],
+            "schema": []
+          },
+          "options": {}
+        },
+        "id": "11111111-1111-4111-8111-111111111103",
+        "name": "Gravar lead no CRM",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [520, 320],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "COLE_ID_CREDENCIAL_GOOGLE_SHEETS",
+            "name": "COLE_SUA_CREDENCIAL"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "cond-prioridade-urgente",
+                "leftValue": "={{ $json.prioridade }}",
+                "rightValue": "urgente",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "11111111-1111-4111-8111-111111111104",
+        "name": "Lead urgente?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [780, 320]
+      },
+      {
+        "parameters": {
+          "chatId": "COLE_CHAT_ID_TELEGRAM",
+          "text": "=🚨 LEAD URGENTE — veio pelo site\n\nCliente: {{ $json.nome || 'nao informado' }}\nCidade/bairro: {{ $json.cidade_bairro || 'nao informado' }}\nPanela: {{ $json.tipo_panela || 'nao informada' }}\nProblema: {{ $json.problema || 'nao informado' }}\nQuer Uber: {{ $json.uber }}\nFotos: {{ $json.qtd_fotos > 0 ? $json.fotos : 'nao enviadas — pedir no WhatsApp' }}\nID do lead: {{ $json.id_lead }}\n\n⏱️ Responder em até 2h úteis.\nWhatsApp da oficina: (31) 98739-6336",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "id": "11111111-1111-4111-8111-111111111105",
+        "name": "Alerta urgente no Telegram",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [1060, 160],
+        "credentials": {
+          "telegramApi": {
+            "id": "COLE_ID_CREDENCIAL_TELEGRAM",
+            "name": "COLE_SUA_CREDENCIAL"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "COLE_CHAT_ID_TELEGRAM",
+          "text": "=📩 NOVO ORÇAMENTO — veio pelo site\n\nCliente: {{ $json.nome || 'nao informado' }}\nCidade/bairro: {{ $json.cidade_bairro || 'nao informado' }}\nPanela: {{ $json.tipo_panela || 'nao informada' }}\nProblema: {{ $json.problema || 'nao informado' }}\nQuer Uber: {{ $json.uber }}\nFotos: {{ $json.qtd_fotos > 0 ? $json.fotos : 'nao enviadas — pedir no WhatsApp' }}\nID do lead: {{ $json.id_lead }}\n\n⏱️ Responder em até 2h úteis.\nWhatsApp da oficina: (31) 98739-6336",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "id": "11111111-1111-4111-8111-111111111106",
+        "name": "Aviso normal no Telegram",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [1060, 480],
+        "credentials": {
+          "telegramApi": {
+            "id": "COLE_ID_CREDENCIAL_TELEGRAM",
+            "name": "COLE_SUA_CREDENCIAL"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "COLE_URL_DA_SUA_EVOLUTION_API/message/sendText/COLE_INSTANCIA",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "COLE_API_KEY_EVOLUTION"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"number\": \"COLE_NUMERO_SECUNDARIO_WHATSAPP\",\n  \"text\": \"Novo lead pelo site: {{ $json.nome }} ({{ $json.cidade_bairro }}) - {{ $json.tipo_panela }} - {{ $json.problema }}. Fotos: {{ $json.qtd_fotos }}\"\n}",
+          "options": {}
+        },
+        "id": "11111111-1111-4111-8111-111111111107",
+        "name": "Alternativa: WhatsApp Evolution (desativado)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [1060, 760],
+        "disabled": true
+      }
+    ],
+    "connections": {
+      "Webhook — Netlify Forms": {
+        "main": [
+          [
+            {
+              "node": "Normalizar lead",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalizar lead": {
+        "main": [
+          [
+            {
+              "node": "Gravar lead no CRM",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Gravar lead no CRM": {
+        "main": [
+          [
+            {
+              "node": "Lead urgente?",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Alternativa: WhatsApp Evolution (desativado)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Lead urgente?": {
+        "main": [
+          [
+            {
+              "node": "Alerta urgente no Telegram",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Aviso normal no Telegram",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "versionId": "00000000-0000-4000-8000-000000000001",
+    "meta": {
+      "templateCredsSetupCompleted": false
+    },
+    "tags": [],
+    "pinData": {}
+  },
+  {
+    "name": "P1/P0-4 Conteúdo semanal + avaliação pós-serviço",
+    "nodes": [
+      {
+        "parameters": {
+          "content": "## P0-4 + P1 · Rotina da semana\n\nEste fluxo tem **duas agendas independentes**:\n\n**A) Segunda 08h — lembrete de conteúdo**\nManda no Telegram o checklist da semana: post pronto, post do GMB, avaliações e backup das fotos.\n\n**B) Diário 09h — pedido de avaliação pós-serviço**\nLê a aba `leads`, acha quem foi **entregue há 1 dia** e ainda não recebeu o pedido de avaliação, manda o texto pronto (T32) e depois marca `avaliacao_pedida = sim` na planilha.\n\n**Por que checagem diária em vez de esperar 1 dia:** um nó de espera longo se perde quando o servidor reinicia. A checagem diária é mais confiável e mais fácil de auditar.",
+          "height": 460,
+          "width": 440,
+          "color": 4
+        },
+        "id": "22222222-2222-4222-8222-222222222209",
+        "name": "Sticky — O que este fluxo faz",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [-720, -80]
+      },
+      {
+        "parameters": {
+          "content": "## COMO CONFIGURAR\n\n1. Crie a credencial do **Telegram** e troque `COLE_CHAT_ID_TELEGRAM` pelos dois nós.\n2. Crie a credencial do **Google Sheets**, selecione nos dois nós e troque `COLE_ID_DA_PLANILHA_CRM`.\n3. Na aba `leads`, confira as colunas `status`, `data_entrega`, `avaliacao_pedida` e `data_pedido_avaliacao`.\n4. **Teste com uma linha fictícia:** status = `entregue`, data_entrega = data de anteontem, avaliacao_pedida vazio. Rode o fluxo manualmente e veja o Telegram chegar.\n5. Ajuste o horário nos dois nós de agenda, se quiser (padrão: segunda 08h e diário 09h).\n\n> Fuso horário: confira se o n8n está em `America/Sao_Paulo` (Settings). Senão, ajuste a hora da agenda.\n\n**O envio ao cliente é 1 toque:** o Telegram traz o link `wa.me` com o número do cliente, e o texto pronto só precisa ser colado.",
+          "height": 460,
+          "width": 440,
+          "color": 5
+        },
+        "id": "22222222-2222-4222-8222-222222222210",
+        "name": "Sticky — Como configurar",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [-720, 400]
+      },
+      {
+        "parameters": {
+          "content": "## Alternativa: envio automático ao cliente (desativado)\n\nO nó laranja abaixo só funciona se você tiver **WhatsApp Cloud API oficial** com o número registrado na Meta e um **template aprovado**.\n\n- Não use o número principal para isso sem antes migrar oficialmente para a Cloud API.\n- Mensagem de marketing/utility fora da janela de 24h é cobrada por mensagem (ver `G-automacao.md` §4).\n- Se ativar, o Telegram deixa de ser obrigatório — mas mantenha o aviso ao dono para controle.",
+          "height": 360,
+          "width": 420,
+          "color": 3
+        },
+        "id": "22222222-2222-4222-8222-222222222211",
+        "name": "Sticky — Alternativa WhatsApp Cloud API",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [760, 560]
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "weeks",
+                "weeksInterval": 1,
+                "triggerAtDay": [1],
+                "triggerAtHour": 8,
+                "triggerAtMinute": 0
+              }
+            ]
+          }
+        },
+        "id": "22222222-2222-4222-8222-222222222201",
+        "name": "Segunda 08h — lembrete de conteúdo",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [0, 100]
+      },
+      {
+        "parameters": {
+          "chatId": "COLE_CHAT_ID_TELEGRAM",
+          "text": "=📅 Lembrete de conteúdo — semana de {{ $now.toFormat('dd/MM') }}\n\nChecklist de hoje (15 min):\n1) Publicar o post da semana já pronto (D-calendario-editorial.md)\n2) Colar 1 post no Google Meu Negócio (E-banco-conteudo/04-google-meu-negocio.md)\n3) Conferir avaliações novas no Google e responder\n4) Salvar as fotos antes/depois da semana no Drive\n\nWhatsApp da oficina: (31) 98739-6336",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "id": "22222222-2222-4222-8222-222222222202",
+        "name": "Lembrete de conteúdo (Telegram)",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [320, 100],
+        "credentials": {
+          "telegramApi": {
+            "id": "COLE_ID_CREDENCIAL_TELEGRAM",
+            "name": "COLE_SUA_CREDENCIAL"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "days",
+                "daysInterval": 1,
+                "triggerAtHour": 9,
+                "triggerAtMinute": 0
+              }
+            ]
+          }
+        },
+        "id": "22222222-2222-4222-8222-222222222203",
+        "name": "Diário 09h — pós-serviço",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [0, 380]
+      },
+      {
+        "parameters": {
+          "operation": "read",
+          "documentId": {
+            "__rl": true,
+            "value": "COLE_ID_DA_PLANILHA_CRM",
+            "mode": "id"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "COLE_CRM_ABA_LEADS",
+            "mode": "name"
+          },
+          "options": {}
+        },
+        "id": "22222222-2222-4222-8222-222222222204",
+        "name": "Ler CRM (entregues)",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [320, 380],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "COLE_ID_CREDENCIAL_GOOGLE_SHEETS",
+            "name": "COLE_SUA_CREDENCIAL"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "// Fica só com serviços entregues há 1 dia que ainda não pediram avaliação.\nconst DIAS = 1;\nconst alvo = new Date();\nalvo.setDate(alvo.getDate() - DIAS);\nconst alvoISO = alvo.toISOString().slice(0, 10);\n\nconst paraISO = (v) => {\n  if (!v) return '';\n  const s = String(v).trim();\n  if (s.length >= 10 && s.charAt(4) === '-' && s.charAt(7) === '-') return s.slice(0, 10);\n  const partes = s.split('/');\n  if (partes.length === 3) {\n    const ano = partes[2].length === 2 ? '20' + partes[2] : partes[2];\n    return ano + '-' + partes[1].padStart(2, '0') + '-' + partes[0].padStart(2, '0');\n  }\n  const t = new Date(s);\n  return isNaN(t.getTime()) ? '' : t.toISOString().slice(0, 10);\n};\n\nconst norm = (v) => String(v === undefined || v === null ? '' : v).trim().toLowerCase();\nconst sair = [];\n\nfor (const item of $input.all()) {\n  const r = item.json;\n  if (norm(r.status) !== 'entregue') continue;\n  if (['sim', 's', 'true', '1'].indexOf(norm(r.avaliacao_pedida)) !== -1) continue;\n  if (paraISO(r.data_entrega) !== alvoISO) continue;\n\n  const nome = String(r.nome || '').trim();\n  if (!nome) continue;\n\n  const dig = String(r.whatsapp || '').replace(/[^0-9]/g, '');\n  let numero = '';\n  if (dig.length === 10 || dig.length === 11) numero = '55' + dig;\n  else if (dig.length >= 12 && dig.slice(0, 2) === '55') numero = dig;\n  const link = numero ? 'https://wa.me/' + numero : '';\n\n  const mensagem = 'Oi, ' + nome + '! Obrigado pela confiança! Se você puder avaliar a gente no Google, me ajuda muito. Avaliação honesta vale mais que qualquer anúncio: https://share.google/4yfzvqiftgoAKwqah';\n\n  sair.push({\n    json: {\n      id_lead: String(r.id_lead || ''),\n      nome: nome,\n      whatsapp: String(r.whatsapp || ''),\n      link_whatsapp: link,\n      tipo_panela: String(r.tipo_panela || ''),\n      servico: String(r.servico || ''),\n      data_entrega: paraISO(r.data_entrega),\n      mensagem_avaliacao: mensagem\n    }\n  });\n}\n\nreturn sair;"
+        },
+        "id": "22222222-2222-4222-8222-222222222205",
+        "name": "Filtrar entregues há 1 dia",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [580, 380]
+      },
+      {
+        "parameters": {
+          "chatId": "COLE_CHAT_ID_TELEGRAM",
+          "text": "=⭐ Pedido de avaliação para enviar\n\nCliente: {{ $json.nome }}\nEntrega: {{ $json.data_entrega }}\nPanela: {{ $json.tipo_panela }}\nServiço: {{ $json.servico }}\n\nTexto pronto (T32) — copie e envie no WhatsApp do cliente:\n{{ $json.mensagem_avaliacao }}\n\nLink direto: {{ $json.link_whatsapp || 'sem telefone na planilha — pedir no chat' }}\n\nDepois de enviar, este fluxo marca avaliacao_pedida = sim na planilha.",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "id": "22222222-2222-4222-8222-222222222206",
+        "name": "Pedido de avaliação (Telegram)",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [860, 380],
+        "credentials": {
+          "telegramApi": {
+            "id": "COLE_ID_CREDENCIAL_TELEGRAM",
+            "name": "COLE_SUA_CREDENCIAL"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "COLE_ID_DA_PLANILHA_CRM",
+            "mode": "id"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "COLE_CRM_ABA_LEADS",
+            "mode": "name"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "id_lead": "={{ $json.id_lead }}",
+              "avaliacao_pedida": "sim",
+              "data_pedido_avaliacao": "={{ $now.toISOString() }}"
+            },
+            "matchingColumns": ["id_lead"],
+            "schema": []
+          },
+          "options": {}
+        },
+        "id": "22222222-2222-4222-8222-222222222207",
+        "name": "Marcar avaliação pedida",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [1140, 380],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "COLE_ID_CREDENCIAL_GOOGLE_SHEETS",
+            "name": "COLE_SUA_CREDENCIAL"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://graph.facebook.com/v21.0/COLE_ID_DO_NUMERO_CLOUD_API/messages",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Authorization",
+                "value": "Bearer COLE_TOKEN_CLOUD_API"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"COLE_NUMERO_CLIENTE_COM_DDI\",\n  \"type\": \"template\",\n  \"template\": {\n    \"name\": \"COLE_NOME_DO_TEMPLATE_APROVADO\",\n    \"language\": { \"code\": \"pt_BR\" },\n    \"components\": [\n      {\n        \"type\": \"body\",\n        \"parameters\": [\n          { \"type\": \"text\", \"text\": \"{{ $json.nome }}\" },\n          { \"type\": \"text\", \"text\": \"{{ $json.link_whatsapp }}\" }\n        ]\n      }\n    ]\n  }\n}",
+          "options": {}
+        },
+        "id": "22222222-2222-4222-8222-222222222208",
+        "name": "Alternativa: WhatsApp Cloud API (desativado)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [860, 700],
+        "disabled": true
+      }
+    ],
+    "connections": {
+      "Segunda 08h — lembrete de conteúdo": {
+        "main": [
+          [
+            {
+              "node": "Lembrete de conteúdo (Telegram)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Diário 09h — pós-serviço": {
+        "main": [
+          [
+            {
+              "node": "Ler CRM (entregues)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Ler CRM (entregues)": {
+        "main": [
+          [
+            {
+              "node": "Filtrar entregues há 1 dia",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filtrar entregues há 1 dia": {
+        "main": [
+          [
+            {
+              "node": "Pedido de avaliação (Telegram)",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Alternativa: WhatsApp Cloud API (desativado)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Pedido de avaliação (Telegram)": {
+        "main": [
+          [
+            {
+              "node": "Marcar avaliação pedida",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "versionId": "00000000-0000-4000-8000-000000000002",
+    "meta": {
+      "templateCredsSetupCompleted": false
+    },
+    "tags": [],
+    "pinData": {}
+  }
+]
