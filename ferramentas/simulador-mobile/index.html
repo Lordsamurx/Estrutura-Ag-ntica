@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulador Mobile</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --painel: #181b22;
+    --painel-2: #20242d;
+    --borda: #2c313c;
+    --texto: #e7e9ee;
+    --suave: #9aa1ad;
+    --destaque: #25d366;
+    --alerta: #f5a524;
+    --erro: #ef4444;
+    --casca: #05060a;
+    --raio: 10px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--texto);
+    font: 14px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+  }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button {
+    background: var(--painel-2);
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    padding: 7px 12px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  button:hover { border-color: var(--suave); }
+  button.primario { background: var(--destaque); color: #052e14; border-color: transparent; font-weight: 600; }
+  button.ativo { border-color: var(--destaque); color: var(--destaque); }
+  input, select, textarea {
+    background: var(--bg);
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    padding: 7px 10px;
+  }
+  input:focus, select:focus, textarea:focus, button:focus-visible { outline: 2px solid var(--destaque); outline-offset: 1px; }
+
+  header {
+    background: var(--painel);
+    border-bottom: 1px solid var(--borda);
+    padding: 10px 16px;
+    display: grid;
+    gap: 8px;
+  }
+  .linha { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .marca { font-weight: 700; margin-right: 6px; }
+  #url { flex: 1 1 320px; min-width: 0; }
+  #sites { max-width: 260px; }
+  .rotulo { color: var(--suave); font-size: 12px; margin-right: 2px; }
+  .chip { padding: 5px 10px; border-radius: 999px; font-size: 13px; }
+  .sep { width: 1px; height: 22px; background: var(--borda); margin: 0 4px; }
+
+  main { flex: 1; display: flex; min-height: 0; }
+  #palco {
+    flex: 1;
+    overflow: auto;
+    padding: 20px 16px 40px;
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    align-content: flex-start;
+  }
+  .aparelho { display: flex; flex-direction: column; gap: 8px; }
+  .aparelho-topo { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; }
+  .aparelho-topo b { font-weight: 600; }
+  .aparelho-topo .medida { color: var(--suave); font-variant-numeric: tabular-nums; }
+  .aparelho-topo .acoes { display: flex; gap: 4px; }
+  .aparelho-topo .acoes button { padding: 3px 8px; font-size: 12px; }
+  .moldura { position: relative; }
+  .casca {
+    position: absolute; top: 0; left: 0;
+    transform-origin: top left;
+    background: var(--casca);
+    border-radius: 38px;
+    padding: 14px;
+    box-shadow: 0 0 0 2px #2a2f3a, 0 18px 40px rgba(0,0,0,.45);
+  }
+  .casca.tablet { border-radius: 26px; padding: 18px; }
+  .casca.desktop { border-radius: 10px; padding: 10px 10px 18px; }
+  .casca iframe {
+    display: block;
+    border: 0;
+    background: #fff;
+    border-radius: 26px;
+  }
+  .casca.tablet iframe { border-radius: 10px; }
+  .casca.desktop iframe { border-radius: 2px; }
+  .diagnostico { display: flex; gap: 6px; flex-wrap: wrap; font-size: 12px; max-width: 100%; }
+  .selo { padding: 2px 8px; border-radius: 999px; background: var(--painel-2); border: 1px solid var(--borda); }
+  .selo.ok { color: var(--destaque); border-color: #1f5f39; }
+  .selo.aviso { color: var(--alerta); border-color: #6b4d12; }
+  .selo.ruim { color: var(--erro); border-color: #6b1f1f; }
+
+  aside {
+    width: 330px;
+    flex: none;
+    background: var(--painel);
+    border-left: 1px solid var(--borda);
+    overflow: auto;
+    padding: 16px;
+  }
+  aside.fechado { display: none; }
+  aside h2 { font-size: 15px; margin: 0 0 4px; }
+  aside p.sub { color: var(--suave); margin: 0 0 12px; font-size: 12px; word-break: break-all; }
+  .item { display: flex; gap: 10px; align-items: flex-start; padding: 7px 0; border-bottom: 1px solid var(--borda); cursor: pointer; }
+  .item input { margin-top: 3px; accent-color: var(--destaque); width: 16px; height: 16px; flex: none; }
+  .item small { display: block; color: var(--suave); }
+  .progresso { height: 6px; background: var(--painel-2); border-radius: 999px; overflow: hidden; margin: 8px 0 12px; }
+  .progresso div { height: 100%; background: var(--destaque); width: 0; transition: width .2s; }
+  aside textarea { width: 100%; min-height: 90px; margin-top: 12px; resize: vertical; }
+  aside .linha { margin-top: 10px; }
+  .dica { color: var(--suave); font-size: 12px; margin-top: 16px; border-top: 1px solid var(--borda); padding-top: 12px; }
+  .dica code { background: var(--bg); padding: 1px 5px; border-radius: 4px; }
+  .vazio { color: var(--suave); padding: 40px 0; text-align: center; width: 100%; }
+  #aviso { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: var(--destaque); color: #052e14; padding: 8px 14px; border-radius: 8px; font-weight: 600; opacity: 0; transition: opacity .2s; pointer-events: none; }
+  #aviso.mostra { opacity: 1; }
+
+  @media (max-width: 900px) {
+    body { display: block; }
+    main { display: block; }
+    #palco { overflow: visible; justify-content: center; }
+    aside { width: 100%; border-left: 0; border-top: 1px solid var(--borda); }
+    #sites { max-width: 100%; flex: 1 1 100%; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="linha">
+    <span class="marca">📱 Simulador Mobile</span>
+    <select id="sites" aria-label="Sites salvos"></select>
+    <input id="url" type="text" placeholder="Endereço do site (ex.: localhost:5180 ou meusite.netlify.app)" aria-label="Endereço do site">
+    <button class="primario" id="carregar">Carregar</button>
+    <button id="salvar" title="Guardar este endereço na lista">☆ Salvar</button>
+    <button id="remover" title="Tirar o site selecionado da lista">Remover</button>
+  </div>
+  <div class="linha" id="linha-aparelhos">
+    <span class="rotulo">Aparelhos:</span>
+  </div>
+  <div class="linha">
+    <span class="rotulo">Zoom:</span>
+    <select id="zoom" aria-label="Zoom">
+      <option value="auto">Caber na tela</option>
+      <option value="1">100%</option>
+      <option value="0.75">75%</option>
+      <option value="0.5">50%</option>
+    </select>
+    <button id="girar">⟳ Girar todos</button>
+    <button id="recarregar">↻ Recarregar todos</button>
+    <span class="sep"></span>
+    <span class="rotulo">Largura livre:</span>
+    <input id="largura" type="number" min="240" max="1920" step="1" placeholder="px" style="width:80px" aria-label="Largura livre em pixels">
+    <button id="add-largura">+ Adicionar</button>
+    <span class="sep"></span>
+    <button id="painel">✓ Checklist</button>
+  </div>
+</header>
+
+<main>
+  <section id="palco" aria-label="Aparelhos"></section>
+  <aside id="lateral">
+    <h2>Checklist mobile</h2>
+    <p class="sub" id="check-url">Carregue um site para começar.</p>
+    <div class="progresso"><div id="barra"></div></div>
+    <div id="itens"></div>
+    <textarea id="notas" placeholder="Anotações deste site (o que corrigir, em qual aparelho)…"></textarea>
+    <div class="linha">
+      <button id="copiar">Copiar relatório</button>
+      <button id="limpar">Zerar checklist</button>
+    </div>
+    <div class="dica">
+      <b>Como usar</b><br>
+      • O site abre em cada aparelho com a largura real dele, então o CSS de celular é aplicado igual ao do aparelho.<br>
+      • Toque, teclado virtual e o navegador do celular <b>não</b> são simulados: a conferência final continua sendo no celular de verdade.<br>
+      • Se um aparelho ficar em branco, o site bloqueia ser aberto dentro de outra página. Use ↗ para abrir em nova aba.<br>
+      • Para ter os <b>diagnósticos automáticos</b> (rolagem lateral, botões pequenos, letras pequenas, links de WhatsApp), abra esta ferramenta pelo servidor da pasta da agência. Veja o <code>LEIAME.md</code>.
+    </div>
+  </aside>
+</main>
+<div id="aviso" role="status"></div>
+
+<script>
+(() => {
+  const APARELHOS = [
+    { id: 'se',     nome: 'iPhone SE',    w: 375,  h: 667,  tipo: 'celular' },
+    { id: 'ip15',   nome: 'iPhone 15',    w: 393,  h: 852,  tipo: 'celular' },
+    { id: 'promax', nome: 'iPhone Pro Max', w: 430, h: 932, tipo: 'celular' },
+    { id: 'galaxy', nome: 'Galaxy S',     w: 360,  h: 780,  tipo: 'celular' },
+    { id: 'a',      nome: 'Galaxy A (popular)', w: 384, h: 832, tipo: 'celular' },
+    { id: 'pixel',  nome: 'Pixel',        w: 412,  h: 915,  tipo: 'celular' },
+    { id: 'ipad',   nome: 'iPad mini',    w: 768,  h: 1024, tipo: 'tablet' },
+    { id: 'note',   nome: 'Notebook',     w: 1366, h: 768,  tipo: 'desktop' },
+  ];
+
+  const CHECKLIST = [
+    ['Sem rolagem para o lado', 'Nada passa da largura da tela no 360 e no 375.'],
+    ['Texto legível sem dar zoom', 'Corpo do texto com 16px ou perto disso.'],
+    ['Botões fáceis de tocar', 'Área de toque de uns 44px, sem botões colados.'],
+    ['WhatsApp visível na primeira tela', 'O CTA aparece sem precisar rolar.'],
+    ['Todo CTA vai para o WhatsApp certo', 'Link wa.me com o número do cliente.'],
+    ['Menu abre e fecha', 'Menu do celular funciona e não cobre o conteúdo.'],
+    ['Imagens carregam e cabem', 'Sem imagem estourada, cortada ou pesada demais.'],
+    ['Nada sobreposto', 'Títulos, botões e textos não se encostam.'],
+    ['Dados do cliente corretos', 'Telefone, endereço e horário conferidos na ficha.'],
+    ['Deitado (girado) também funciona', 'Girar o aparelho não quebra o layout.'],
+    ['Tablet e computador ok', 'iPad e notebook sem buracos ou esticados.'],
+    ['Testado no celular de verdade', 'Abrir no próprio celular antes do PR.'],
+  ];
+
+  const SITES_PADRAO = [
+    { nome: 'Conserto de panelas (com diagnóstico)', url: '/Conserto%20de%20panelas/site-novo/' },
+    { nome: 'Conserto de panelas (local 5180)', url: 'http://localhost:5180/' },
+    { nome: 'Conserto de panelas (Netlify)', url: 'https://conserto-de-panelas-bh.netlify.app/' },
+  ];
+
+  // ---------- armazenamento (falha em silêncio em janela anônima) ----------
+  const CHAVE = 'simulador-mobile:v1';
+  function ler() {
+    try { return JSON.parse(localStorage.getItem(CHAVE)) || {}; } catch { return {}; }
+  }
+  function gravar() {
+    try { localStorage.setItem(CHAVE, JSON.stringify(estado)); } catch {}
+  }
+
+  const salvo = ler();
+  const estado = {
+    url: salvo.url || (location.protocol === 'file:' ? SITES_PADRAO[2].url : SITES_PADRAO[0].url),
+    sites: Array.isArray(salvo.sites) && salvo.sites.length ? salvo.sites : SITES_PADRAO.slice(),
+    ativos: Array.isArray(salvo.ativos) ? salvo.ativos : ['se', 'ip15', 'galaxy'],
+    livres: Array.isArray(salvo.livres) ? salvo.livres : [],
+    girados: salvo.girados || {},
+    zoom: salvo.zoom || 'auto',
+    painel: salvo.painel !== false,
+    checks: salvo.checks || {},
+  };
+
+  const $ = (s) => document.querySelector(s);
+  const palco = $('#palco');
+  const campoUrl = $('#url');
+  const listaSites = $('#sites');
+
+  function avisar(msg) {
+    const a = $('#aviso');
+    a.textContent = msg;
+    a.classList.add('mostra');
+    clearTimeout(avisar.t);
+    avisar.t = setTimeout(() => a.classList.remove('mostra'), 1800);
+  }
+
+  function normalizar(u) {
+    u = (u || '').trim();
+    if (!u) return '';
+    if (/^(https?:|file:)/i.test(u) || u.startsWith('/')) return u;
+    const local = /^(localhost|127\.|192\.168\.|10\.)/i.test(u);
+    return (local ? 'http://' : 'https://') + u;
+  }
+
+  function todosAparelhos() {
+    return APARELHOS.concat(estado.livres.map((w) => ({
+      id: 'livre-' + w, nome: 'Livre', w, h: Math.round(w * 2.05), tipo: w >= 1024 ? 'desktop' : (w >= 700 ? 'tablet' : 'celular'), livre: true,
+    })));
+  }
+
+  // ---------- sites salvos ----------
+  function montarSites() {
+    listaSites.innerHTML = '';
+    const opc0 = document.createElement('option');
+    opc0.value = '';
+    opc0.textContent = 'Sites salvos…';
+    listaSites.appendChild(opc0);
+    estado.sites.forEach((s, i) => {
+      const o = document.createElement('option');
+      o.value = String(i);
+      o.textContent = s.nome;
+      if (s.url === estado.url) o.selected = true;
+      listaSites.appendChild(o);
+    });
+  }
+  listaSites.addEventListener('change', () => {
+    const s = estado.sites[Number(listaSites.value)];
+    if (s) carregar(s.url);
+  });
+  $('#salvar').addEventListener('click', () => {
+    const url = normalizar(campoUrl.value);
+    if (!url) return;
+    if (estado.sites.some((s) => s.url === url)) { avisar('Esse site já está salvo'); return; }
+    const nome = prompt('Nome do site na lista:', url.replace(/^https?:\/\//, '').replace(/\/$/, ''));
+    if (!nome) return;
+    estado.sites.push({ nome: nome.trim(), url });
+    gravar(); montarSites(); avisar('Site salvo');
+  });
+  $('#remover').addEventListener('click', () => {
+    const i = Number(listaSites.value);
+    const s = estado.sites[i];
+    if (!listaSites.value || !s) { avisar('Escolha um site da lista primeiro'); return; }
+    if (!confirm('Tirar "' + s.nome + '" da lista?')) return;
+    estado.sites.splice(i, 1);
+    gravar(); montarSites();
+  });
+
+  // ---------- botões de aparelho ----------
+  function montarChips() {
+    const linha = $('#linha-aparelhos');
+    linha.querySelectorAll('.chip').forEach((c) => c.remove());
+    todosAparelhos().forEach((a) => {
+      const b = document.createElement('button');
+      b.className = 'chip' + (estado.ativos.includes(a.id) ? ' ativo' : '');
+      b.textContent = a.livre ? a.w + 'px ✕' : a.nome + ' · ' + a.w;
+      b.title = a.livre ? 'Clique para tirar esta largura' : 'Mostrar ou esconder';
+      b.addEventListener('click', () => {
+        if (a.livre) {
+          estado.livres = estado.livres.filter((w) => w !== a.w);
+          estado.ativos = estado.ativos.filter((x) => x !== a.id);
+        } else if (estado.ativos.includes(a.id)) {
+          estado.ativos = estado.ativos.filter((x) => x !== a.id);
+        } else {
+          estado.ativos.push(a.id);
+        }
+        gravar(); montarChips(); montarPalco();
+      });
+      linha.appendChild(b);
+    });
+  }
+  $('#add-largura').addEventListener('click', () => {
+    const w = Math.round(Number($('#largura').value));
+    if (!(w >= 240 && w <= 1920)) { avisar('Use uma largura entre 240 e 1920'); return; }
+    if (!estado.livres.includes(w)) estado.livres.push(w);
+    if (!estado.ativos.includes('livre-' + w)) estado.ativos.push('livre-' + w);
+    $('#largura').value = '';
+    gravar(); montarChips(); montarPalco();
+  });
+
+  // ---------- palco ----------
+  function medidas(a) {
+    const g = !!estado.girados[a.id];
+    return { w: g ? a.h : a.w, h: g ? a.w : a.h };
+  }
+  function borda(tipo) { return tipo === 'tablet' ? 18 : tipo === 'desktop' ? 10 : 14; }
+
+  function escala(a) {
+    if (estado.zoom !== 'auto') return Number(estado.zoom);
+    const { w, h } = medidas(a);
+    const b = borda(a.tipo);
+    const estreito = window.matchMedia('(max-width: 900px)').matches;
+    const altura = Math.max(320, (estreito ? window.innerHeight * 0.85 : palco.clientHeight) - 110);
+    const largura = Math.max(260, palco.clientWidth - 40);
+    return Math.min(1, altura / (h + b * 2 + 8), largura / (w + b * 2));
+  }
+
+  function montarPalco() {
+    palco.innerHTML = '';
+    const lista = todosAparelhos().filter((a) => estado.ativos.includes(a.id));
+    if (!lista.length) {
+      palco.innerHTML = '<p class="vazio">Escolha pelo menos um aparelho acima.</p>';
+      return;
+    }
+    lista.forEach((a) => {
+      const { w, h } = medidas(a);
+      const b = borda(a.tipo);
+      const s = escala(a);
+      const cw = w + b * 2;
+      const ch = h + b * 2 + (a.tipo === 'desktop' ? 8 : 0);
+
+      const caixa = document.createElement('div');
+      caixa.className = 'aparelho';
+      caixa.style.width = Math.max(cw * s, 200) + 'px';
+
+      const topo = document.createElement('div');
+      topo.className = 'aparelho-topo';
+      topo.innerHTML = '<span><b></b> <span class="medida"></span></span><span class="acoes"></span>';
+      topo.querySelector('b').textContent = a.livre ? 'Largura livre' : a.nome;
+      topo.querySelector('.medida').textContent = w + '×' + h + (s < 1 ? ' · ' + Math.round(s * 100) + '%' : '');
+      const acoes = topo.querySelector('.acoes');
+
+      const iframe = document.createElement('iframe');
+      iframe.width = w;
+      iframe.height = h;
+      iframe.title = (a.livre ? 'Largura ' + w : a.nome) + ' — ' + estado.url;
+      iframe.src = estado.url;
+
+      const diag = document.createElement('div');
+      diag.className = 'diagnostico';
+
+      const bt = (txt, title, fn) => {
+        const x = document.createElement('button');
+        x.textContent = txt; x.title = title; x.addEventListener('click', fn);
+        acoes.appendChild(x);
+      };
+      bt('⟳', 'Girar este aparelho', () => { estado.girados[a.id] = !estado.girados[a.id]; gravar(); montarPalco(); });
+      bt('↻', 'Recarregar', () => { iframe.src = estado.url; });
+      bt('↗', 'Abrir em nova aba', () => { window.open(estado.url, '_blank', 'noopener'); });
+
+      const moldura = document.createElement('div');
+      moldura.className = 'moldura';
+      moldura.style.width = cw * s + 'px';
+      moldura.style.height = ch * s + 'px';
+      const casca = document.createElement('div');
+      casca.className = 'casca' + (a.tipo !== 'celular' ? ' ' + a.tipo : '');
+      casca.style.transform = 'scale(' + s + ')';
+      casca.appendChild(iframe);
+      moldura.appendChild(casca);
+
+      iframe.addEventListener('load', () => diagnosticar(iframe, diag, w));
+
+      caixa.append(topo, moldura, diag);
+      palco.appendChild(caixa);
+    });
+  }
+
+  // ---------- diagnóstico automático (só quando o site é da mesma origem) ----------
+  function selo(diag, classe, texto, dica) {
+    const x = document.createElement('span');
+    x.className = 'selo ' + classe;
+    x.textContent = texto;
+    if (dica) x.title = dica;
+    diag.appendChild(x);
+  }
+  function diagnosticar(iframe, diag, w) {
+    diag.innerHTML = '';
+    let doc;
+    try { doc = iframe.contentDocument; if (!doc || !doc.body) throw 0; }
+    catch { selo(diag, '', 'sem diagnóstico automático', 'O site está em outra origem. Veja o LEIAME.md para ativar.'); return; }
+
+    setTimeout(() => {
+      try {
+        const win = iframe.contentWindow;
+        const larg = Math.max(doc.documentElement.scrollWidth, doc.body.scrollWidth);
+        const sobra = larg - win.innerWidth;
+        if (sobra > 1) selo(diag, 'ruim', '↔ passa ' + sobra + 'px da tela', culpados(doc, win.innerWidth));
+        else selo(diag, 'ok', '↔ sem rolagem lateral');
+
+        const tocaveis = [...doc.querySelectorAll('a[href], button, input, select, textarea, [role="button"]')]
+          .filter((el) => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0 && win.getComputedStyle(el).visibility !== 'hidden'; });
+        const pequenos = tocaveis.filter((el) => {
+          const r = el.getBoundingClientRect();
+          const emTexto = el.tagName === 'A' && el.closest('p, li') && !el.className;
+          return !emTexto && (r.height < 40 || r.width < 40);
+        });
+        selo(diag, pequenos.length ? 'aviso' : 'ok', '👆 ' + pequenos.length + ' alvo(s) menor(es) que 40px',
+          pequenos.slice(0, 8).map(descrever).join('\n'));
+
+        const letras = [...doc.querySelectorAll('p, li, a, span, label, small, td')]
+          .filter((el) => el.childNodes.length && [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()))
+          .filter((el) => parseFloat(win.getComputedStyle(el).fontSize) < 13);
+        selo(diag, letras.length ? 'aviso' : 'ok', 'Aa ' + letras.length + ' texto(s) abaixo de 13px',
+          letras.slice(0, 8).map(descrever).join('\n'));
+
+        const wa = [...doc.querySelectorAll('a[href]')].filter((el) => /wa\.me|api\.whatsapp\.com|whatsapp:/i.test(el.getAttribute('href')));
+        const numeros = [...new Set(wa.map((el) => (el.getAttribute('href').match(/(?:wa\.me\/|phone=)(\d+)/) || [])[1]).filter(Boolean))];
+        selo(diag, wa.length ? (numeros.length > 1 ? 'aviso' : 'ok') : 'aviso',
+          '💬 ' + wa.length + ' link(s) de WhatsApp' + (numeros.length > 1 ? ' · ' + numeros.length + ' números diferentes!' : ''),
+          numeros.join('\n'));
+
+        const primeira = wa.some((el) => { const r = el.getBoundingClientRect(); return r.top < win.innerHeight && r.bottom > 0 && r.width > 0; });
+        if (wa.length) selo(diag, primeira ? 'ok' : 'aviso', primeira ? 'WhatsApp na primeira tela' : 'WhatsApp só depois de rolar');
+      } catch (e) {
+        selo(diag, '', 'diagnóstico falhou: ' + e.message);
+      }
+    }, 600);
+  }
+  function descrever(el) {
+    const t = (el.textContent || el.getAttribute('aria-label') || '').trim().replace(/\s+/g, ' ').slice(0, 40);
+    return el.tagName.toLowerCase() + (el.className && typeof el.className === 'string' ? '.' + el.className.trim().split(/\s+/)[0] : '') + (t ? ' "' + t + '"' : '');
+  }
+  function culpados(doc, larg) {
+    const lista = [...doc.body.querySelectorAll('*')].filter((el) => el.getBoundingClientRect().right > larg + 1);
+    const folhas = lista.filter((el) => !lista.some((o) => o !== el && el.contains(o)));
+    return 'Passam da tela:\n' + folhas.slice(0, 8).map(descrever).join('\n');
+  }
+
+  // ---------- checklist ----------
+  function chaveCheck() { return estado.url.replace(/[?#].*$/, ''); }
+  function montarChecklist() {
+    const k = chaveCheck();
+    const dados = estado.checks[k] || { feitos: [], notas: '' };
+    $('#check-url').textContent = k;
+    const itens = $('#itens');
+    itens.innerHTML = '';
+    CHECKLIST.forEach(([titulo, dica], i) => {
+      const l = document.createElement('label');
+      l.className = 'item';
+      l.innerHTML = '<input type="checkbox"><span><span class="t"></span><small></small></span>';
+      l.querySelector('.t').textContent = titulo;
+      l.querySelector('small').textContent = dica;
+      const cb = l.querySelector('input');
+      cb.checked = dados.feitos.includes(i);
+      cb.addEventListener('change', () => {
+        const d = estado.checks[k] || { feitos: [], notas: '' };
+        d.feitos = cb.checked ? [...new Set([...d.feitos, i])] : d.feitos.filter((x) => x !== i);
+        estado.checks[k] = d; gravar(); progresso();
+      });
+      itens.appendChild(l);
+    });
+    $('#notas').value = dados.notas || '';
+    progresso();
+  }
+  function progresso() {
+    const d = estado.checks[chaveCheck()] || { feitos: [] };
+    $('#barra').style.width = (d.feitos.length / CHECKLIST.length * 100) + '%';
+  }
+  $('#notas').addEventListener('input', (e) => {
+    const k = chaveCheck();
+    const d = estado.checks[k] || { feitos: [], notas: '' };
+    d.notas = e.target.value; estado.checks[k] = d; gravar();
+  });
+  $('#limpar').addEventListener('click', () => {
+    if (!confirm('Zerar o checklist e as anotações deste site?')) return;
+    delete estado.checks[chaveCheck()]; gravar(); montarChecklist();
+  });
+  $('#copiar').addEventListener('click', async () => {
+    const d = estado.checks[chaveCheck()] || { feitos: [], notas: '' };
+    const aparelhos = todosAparelhos().filter((a) => estado.ativos.includes(a.id)).map((a) => (a.livre ? 'livre' : a.nome) + ' ' + a.w + 'px').join(', ');
+    const linhas = [
+      '## Teste mobile',
+      'Site: ' + chaveCheck(),
+      'Aparelhos: ' + aparelhos,
+      '',
+      ...CHECKLIST.map(([t], i) => '- [' + (d.feitos.includes(i) ? 'x' : ' ') + '] ' + t),
+    ];
+    const diags = [...document.querySelectorAll('.aparelho')].map((c) => {
+      const nome = c.querySelector('.aparelho-topo b').textContent + ' ' + c.querySelector('.medida').textContent.split(' ')[0];
+      const s = [...c.querySelectorAll('.selo')].map((x) => x.textContent).join(' · ');
+      return s ? '- ' + nome + ': ' + s : '';
+    }).filter(Boolean);
+    if (diags.length) linhas.push('', '### Diagnóstico automático', ...diags);
+    if (d.notas && d.notas.trim()) linhas.push('', '### Anotações', d.notas.trim());
+    const texto = linhas.join('\n');
+    try { await navigator.clipboard.writeText(texto); avisar('Relatório copiado'); }
+    catch { prompt('Copie o relatório:', texto); }
+  });
+
+  // ---------- controles gerais ----------
+  function carregar(url) {
+    url = normalizar(url);
+    if (!url) return;
+    estado.url = url;
+    campoUrl.value = url;
+    gravar(); montarSites(); montarPalco(); montarChecklist();
+  }
+  $('#carregar').addEventListener('click', () => carregar(campoUrl.value));
+  campoUrl.addEventListener('keydown', (e) => { if (e.key === 'Enter') carregar(campoUrl.value); });
+  $('#recarregar').addEventListener('click', () => {
+    palco.querySelectorAll('iframe').forEach((f) => { f.src = estado.url; });
+  });
+  $('#girar').addEventListener('click', () => {
+    const lista = todosAparelhos().filter((a) => estado.ativos.includes(a.id));
+    const algumEmPe = lista.some((a) => !estado.girados[a.id]);
+    lista.forEach((a) => { estado.girados[a.id] = algumEmPe; });
+    gravar(); montarPalco();
+  });
+  const zoom = $('#zoom');
+  zoom.value = estado.zoom;
+  zoom.addEventListener('change', () => { estado.zoom = zoom.value; gravar(); montarPalco(); });
+  const lateral = $('#lateral');
+  const btPainel = $('#painel');
+  function aplicarPainel() {
+    lateral.classList.toggle('fechado', !estado.painel);
+    btPainel.classList.toggle('ativo', estado.painel);
+  }
+  btPainel.addEventListener('click', () => { estado.painel = !estado.painel; gravar(); aplicarPainel(); montarPalco(); });
+
+  let tempo;
+  window.addEventListener('resize', () => {
+    if (estado.zoom !== 'auto') return;
+    clearTimeout(tempo);
+    tempo = setTimeout(montarPalco, 250);
+  });
+
+  // ---------- início ----------
+  const daBarra = new URLSearchParams(location.search).get('url');
+  campoUrl.value = estado.url;
+  aplicarPainel();
+  montarSites();
+  montarChips();
+  if (daBarra) carregar(daBarra); else { montarPalco(); montarChecklist(); }
+})();
+</script>
+</body>
+</html>
