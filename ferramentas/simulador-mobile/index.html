@@ -1,0 +1,948 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulador Mobile</title>
+<style>
+  :root {
+    --bg: #0d0f13;
+    --painel: #15181e;
+    --painel-2: #1c2028;
+    --painel-3: #242934;
+    --borda: #2a2f3a;
+    --borda-forte: #3a4150;
+    --texto: #e8eaef;
+    --suave: #959cab;
+    --apagado: #6b7280;
+    --destaque: #25d366;
+    --destaque-fundo: rgba(37, 211, 102, .12);
+    --alerta: #f5a524;
+    --erro: #f05252;
+    --casca: #050608;
+    --sombra: 0 10px 30px rgba(0, 0, 0, .35);
+    --cor-a: #25d366;
+    --cor-b: #60a5fa;
+    --cor-c: #f472b6;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--texto);
+    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+  }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button {
+    background: var(--painel-2);
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    padding: 6px 11px;
+    cursor: pointer;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: border-color .15s, background .15s, color .15s;
+  }
+  button:hover { border-color: var(--borda-forte); background: var(--painel-3); }
+  button.primario { background: var(--destaque); color: #04230f; border-color: transparent; font-weight: 600; }
+  button.primario:hover { background: #3be07c; }
+  button.ativo { border-color: var(--destaque); color: var(--destaque); background: var(--destaque-fundo); }
+  button.icone { padding: 5px 8px; }
+  button:disabled { opacity: .45; cursor: default; }
+  input, select, textarea {
+    background: var(--bg);
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    padding: 6px 10px;
+  }
+  input::placeholder, textarea::placeholder { color: var(--apagado); }
+  :focus-visible { outline: 2px solid var(--destaque); outline-offset: 1px; }
+  svg { width: 15px; height: 15px; flex: none; }
+
+  /* ---------- barra superior ---------- */
+  .topo {
+    background: var(--painel);
+    border-bottom: 1px solid var(--borda);
+    padding: 10px 16px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 5;
+  }
+  .marca { display: flex; align-items: center; gap: 8px; font-weight: 700; letter-spacing: -.01em; margin-right: 6px; }
+  .marca .logo { width: 26px; height: 26px; border-radius: 7px; background: var(--destaque); color: #04230f; display: grid; place-items: center; }
+  .marca .logo svg { width: 16px; height: 16px; }
+  .grupo { display: flex; gap: 4px; align-items: center; }
+  .grupo-sep { width: 1px; height: 24px; background: var(--borda); margin: 0 4px; }
+  .empurra { flex: 1; }
+  .segmentado { display: inline-flex; background: var(--bg); border: 1px solid var(--borda); border-radius: 8px; padding: 2px; }
+  .segmentado button { border: 0; background: transparent; padding: 4px 9px; border-radius: 6px; font-size: 13px; color: var(--suave); }
+  .segmentado button.ativo { background: var(--painel-3); color: var(--texto); }
+  .selecionados { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
+  .chip {
+    font-size: 12.5px;
+    padding: 3px 4px 3px 10px;
+    border-radius: 999px;
+    background: var(--painel-2);
+    border: 1px solid var(--borda);
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .chip .px { color: var(--apagado); font-variant-numeric: tabular-nums; }
+  .chip button { border: 0; background: transparent; padding: 1px 5px; border-radius: 999px; color: var(--apagado); }
+  .chip button:hover { color: var(--erro); background: transparent; }
+
+  /* ---------- seletor de aparelhos ---------- */
+  .seletor { position: relative; }
+  .pop {
+    position: absolute; top: calc(100% + 6px); left: 0;
+    width: 360px; max-width: calc(100vw - 32px);
+    background: var(--painel);
+    border: 1px solid var(--borda-forte);
+    border-radius: 12px;
+    box-shadow: var(--sombra);
+    display: none;
+    flex-direction: column;
+    max-height: min(560px, calc(100vh - 90px));
+  }
+  .pop.aberto { display: flex; }
+  .pop-topo { padding: 10px; border-bottom: 1px solid var(--borda); display: grid; gap: 8px; }
+  .pop-topo input { width: 100%; }
+  .atalhos { display: flex; gap: 4px; flex-wrap: wrap; }
+  .atalhos button { font-size: 12px; padding: 3px 9px; border-radius: 999px; }
+  .lista { overflow: auto; padding: 4px 0; }
+  .lista h4 { margin: 8px 12px 2px; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--apagado); font-weight: 600; }
+  .op { display: flex; align-items: center; gap: 10px; padding: 6px 12px; cursor: pointer; }
+  .op:hover { background: var(--painel-2); }
+  .op input { accent-color: var(--destaque); width: 15px; height: 15px; margin: 0; }
+  .op .nome { flex: 1; }
+  .op .tag { font-size: 10.5px; color: var(--destaque); border: 1px solid #1f5f39; border-radius: 999px; padding: 0 6px; }
+  .op .px { color: var(--apagado); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .pop-rodape { padding: 10px; border-top: 1px solid var(--borda); display: flex; gap: 6px; align-items: center; }
+  .pop-rodape input { width: 90px; }
+  .pop-rodape .contador { margin-left: auto; color: var(--apagado); font-size: 12px; }
+  .nada { color: var(--apagado); padding: 16px 12px; text-align: center; }
+
+  /* ---------- área principal ---------- */
+  main { flex: 1; display: flex; min-height: 0; }
+  #janelas { flex: 1; display: flex; min-width: 0; }
+  .janela { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; border-right: 1px solid var(--borda); }
+  .janela:last-child { border-right: 0; }
+  .janela.foco .janela-topo { box-shadow: inset 0 -2px 0 var(--cor); }
+  .janela-topo {
+    display: flex; gap: 6px; align-items: center;
+    padding: 8px 12px;
+    background: var(--painel);
+    border-bottom: 1px solid var(--borda);
+  }
+  .letra { width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; font-weight: 700; font-size: 12px; color: #0d0f13; background: var(--cor); flex: none; }
+  .janela-topo select { max-width: 170px; min-width: 0; flex: 0 1 auto; }
+  .janela-topo input { flex: 1 1 120px; min-width: 0; }
+  .palco {
+    flex: 1;
+    overflow: auto;
+    padding: 18px 16px 36px;
+    display: flex;
+    gap: 26px;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-content: flex-start;
+  }
+  .aparelho { display: flex; flex-direction: column; gap: 8px; }
+  .aparelho-topo { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 12.5px; min-height: 26px; }
+  .aparelho-topo .info { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .aparelho-topo b { font-weight: 600; }
+  .aparelho-topo .medida { color: var(--apagado); font-variant-numeric: tabular-nums; margin-left: 4px; }
+  .aparelho-topo .acoes { display: flex; gap: 2px; opacity: .55; transition: opacity .15s; }
+  .aparelho:hover .acoes, .aparelho:focus-within .acoes { opacity: 1; }
+  .aparelho-topo .acoes button { padding: 4px 6px; background: transparent; border-color: transparent; }
+  .aparelho-topo .acoes button:hover { background: var(--painel-2); border-color: var(--borda); }
+  .aparelho-topo .acoes svg { width: 14px; height: 14px; }
+  .moldura { position: relative; }
+  .casca {
+    position: absolute; top: 0; left: 0;
+    transform-origin: top left;
+    background: var(--casca);
+    border-radius: 40px;
+    padding: 13px;
+    box-shadow: 0 0 0 1.5px #313745, 0 0 0 4px #14171d, var(--sombra);
+  }
+  .casca.tablet { border-radius: 26px; padding: 18px; }
+  .casca.desktop { border-radius: 10px; padding: 10px 10px 18px; }
+  .casca iframe { display: block; border: 0; background: #fff; border-radius: 28px; }
+  .casca.tablet iframe { border-radius: 10px; }
+  .casca.desktop iframe { border-radius: 2px; }
+  .diagnostico { display: flex; gap: 5px; flex-wrap: wrap; font-size: 11.5px; }
+  .selo { padding: 2px 8px; border-radius: 999px; background: var(--painel-2); border: 1px solid var(--borda); color: var(--suave); cursor: default; }
+  .selo.ok { color: var(--destaque); border-color: #1d5534; }
+  .selo.aviso { color: var(--alerta); border-color: #634610; }
+  .selo.ruim { color: var(--erro); border-color: #6b2222; }
+  .vazio { color: var(--apagado); padding: 60px 16px; text-align: center; width: 100%; }
+
+  /* ---------- checklist ---------- */
+  aside {
+    width: 320px;
+    flex: none;
+    background: var(--painel);
+    border-left: 1px solid var(--borda);
+    overflow: auto;
+    padding: 16px;
+  }
+  aside.fechado { display: none; }
+  .aside-topo { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  aside h2 { font-size: 15px; margin: 0; }
+  aside .alvo { display: flex; gap: 6px; align-items: center; margin-top: 10px; }
+  aside .alvo select { flex: 1; min-width: 0; }
+  aside p.sub { color: var(--apagado); margin: 6px 0 0; font-size: 12px; word-break: break-all; }
+  .progresso { display: flex; align-items: center; gap: 8px; margin: 12px 0 6px; font-size: 12px; color: var(--suave); }
+  .barra { flex: 1; height: 6px; background: var(--painel-3); border-radius: 999px; overflow: hidden; }
+  .barra div { height: 100%; background: var(--destaque); width: 0; transition: width .25s; }
+  .item { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--borda); cursor: pointer; }
+  .item:last-child { border-bottom: 0; }
+  .item input { margin-top: 2px; accent-color: var(--destaque); width: 16px; height: 16px; flex: none; }
+  .item small { display: block; color: var(--apagado); }
+  .item:has(input:checked) .t { color: var(--suave); text-decoration: line-through; text-decoration-color: var(--apagado); }
+  aside textarea { width: 100%; min-height: 84px; margin-top: 10px; resize: vertical; }
+  aside .acoes-check { display: flex; gap: 6px; margin-top: 8px; }
+  aside .acoes-check button:first-child { flex: 1; justify-content: center; }
+  details.dica { color: var(--suave); font-size: 12px; margin-top: 16px; border-top: 1px solid var(--borda); padding-top: 12px; }
+  details.dica summary { cursor: pointer; color: var(--texto); font-weight: 600; }
+  details.dica ul { padding-left: 16px; margin: 8px 0 0; }
+  details.dica li { margin-bottom: 6px; }
+  details.dica code { background: var(--bg); padding: 1px 5px; border-radius: 4px; }
+
+  #aviso { position: fixed; bottom: 18px; left: 50%; transform: translate(-50%, 8px); background: var(--texto); color: var(--bg); padding: 8px 14px; border-radius: 8px; font-weight: 600; opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none; z-index: 20; }
+  #aviso.mostra { opacity: 1; transform: translate(-50%, 0); }
+
+  @media (max-width: 900px) {
+    body { display: block; }
+    main, #janelas { display: block; }
+    .janela { border-right: 0; border-bottom: 1px solid var(--borda); }
+    .palco { overflow: visible; }
+    aside { width: 100%; border-left: 0; }
+    .empurra { display: none; }
+    .janela-topo { flex-wrap: wrap; }
+    .janela-topo select { max-width: none; flex: 1 1 calc(100% - 40px); }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-cel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></symbol>
+  <symbol id="i-girar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></symbol>
+  <symbol id="i-recarregar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></symbol>
+  <symbol id="i-abrir" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
+  <symbol id="i-dividir" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h11"/></symbol>
+  <symbol id="i-elo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14"/><path d="M8 9l4-4 4 4"/><path d="M8 15l4 4 4-4"/></symbol>
+  <symbol id="i-estrela" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-seta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></symbol>
+</svg>
+
+<header class="topo">
+  <div class="marca"><span class="logo"><svg><use href="#i-cel"/></svg></span>Simulador Mobile</div>
+
+  <div class="seletor">
+    <button id="abrir-seletor" aria-expanded="false" aria-controls="pop"><svg><use href="#i-cel"/></svg>Aparelhos <span id="qtd" class="px"></span><svg><use href="#i-seta"/></svg></button>
+    <div class="pop" id="pop" role="dialog" aria-label="Escolher aparelhos">
+      <div class="pop-topo">
+        <input id="busca" type="search" placeholder="Buscar modelo, marca ou largura (ex.: galaxy, moto, 390)" aria-label="Buscar aparelho">
+        <div class="atalhos" id="atalhos"></div>
+      </div>
+      <div class="lista" id="lista"></div>
+      <div class="pop-rodape">
+        <input id="largura" type="number" min="240" max="1920" placeholder="Largura" aria-label="Largura livre em pixels">
+        <button id="add-largura">+ Largura livre</button>
+        <span class="contador" id="contador"></span>
+      </div>
+    </div>
+  </div>
+  <div class="selecionados" id="selecionados"></div>
+
+  <span class="empurra"></span>
+
+  <div class="segmentado" id="zoom" role="group" aria-label="Zoom">
+    <button data-z="auto">Caber</button>
+    <button data-z="1">100%</button>
+    <button data-z="0.75">75%</button>
+    <button data-z="0.5">50%</button>
+  </div>
+  <div class="grupo">
+    <button class="icone" id="girar" title="Girar todos os aparelhos"><svg><use href="#i-girar"/></svg></button>
+    <button class="icone" id="recarregar" title="Recarregar todos"><svg><use href="#i-recarregar"/></svg></button>
+    <button id="sincronizar" title="Rolar todos os aparelhos juntos (só com diagnóstico ativo)"><svg><use href="#i-elo"/></svg>Rolar junto</button>
+  </div>
+  <span class="grupo-sep"></span>
+  <button id="dividir" title="Abrir outra janela para comparar outro site"><svg><use href="#i-dividir"/></svg>Dividir tela</button>
+  <button id="painel" title="Mostrar ou esconder o checklist"><svg><use href="#i-check"/></svg>Checklist</button>
+</header>
+
+<main>
+  <div id="janelas"></div>
+  <aside id="lateral">
+    <div class="aside-topo"><h2>Checklist mobile</h2></div>
+    <div class="alvo">
+      <select id="alvo" aria-label="Janela do checklist"></select>
+    </div>
+    <p class="sub" id="check-url"></p>
+    <div class="progresso"><div class="barra"><div id="barra"></div></div><span id="conta"></span></div>
+    <div id="itens"></div>
+    <textarea id="notas" placeholder="Anotações deste site: o que corrigir e em qual aparelho…"></textarea>
+    <div class="acoes-check">
+      <button id="copiar">Copiar relatório</button>
+      <button id="limpar">Zerar</button>
+    </div>
+    <details class="dica">
+      <summary>Como usar</summary>
+      <ul>
+        <li>Cada aparelho tem a largura real dele, então o site aparece com o layout de celular que o cliente vê.</li>
+        <li><b>Dividir tela</b> abre até 3 janelas. Cada uma carrega um site; os aparelhos são os mesmos, para comparar versões lado a lado.</li>
+        <li>Toque, teclado do celular e Safari <b>não</b> são simulados: a conferência final é no celular de verdade.</li>
+        <li>Aparelho em branco: o site bloqueia ser aberto dentro de outra página. Use o botão de abrir em nova aba.</li>
+        <li><b>Diagnóstico automático</b> e <b>Rolar junto</b> só funcionam com a ferramenta aberta pelo <code>abrir.bat</code> e o site em um endereço que começa com <code>/</code>. Veja o <code>LEIAME.md</code>.</li>
+      </ul>
+    </details>
+  </aside>
+</main>
+<div id="aviso" role="status"></div>
+
+<script>
+(() => {
+  // Medidas em pixels de CSS (a tela que o navegador do aparelho enxerga), em pé.
+  // Os grupos juntam modelos com a mesma medida. Valores aproximados para Android.
+  const APARELHOS = [
+    { id: 'se1',      marca: 'Apple',    nome: 'iPhone SE (1ª) / 5s', w: 320, h: 568 },
+    { id: 'se',       marca: 'Apple',    nome: 'iPhone SE (2ª/3ª) / 8', w: 375, h: 667 },
+    { id: 'ip8plus',  marca: 'Apple',    nome: 'iPhone 8 Plus', w: 414, h: 736 },
+    { id: 'ipx',      marca: 'Apple',    nome: 'iPhone X / XS / 11 Pro / 12 mini / 13 mini', w: 375, h: 812 },
+    { id: 'ip11',     marca: 'Apple',    nome: 'iPhone XR / 11', w: 414, h: 896, pop: true },
+    { id: 'ip13',     marca: 'Apple',    nome: 'iPhone 12 / 13 / 14', w: 390, h: 844, pop: true },
+    { id: 'ip15',     marca: 'Apple',    nome: 'iPhone 14 Pro / 15 / 16', w: 393, h: 852, pop: true },
+    { id: 'ip16pro',  marca: 'Apple',    nome: 'iPhone 16 Pro', w: 402, h: 874 },
+    { id: 'ip14plus', marca: 'Apple',    nome: 'iPhone 14 Plus', w: 428, h: 926 },
+    { id: 'promax',   marca: 'Apple',    nome: 'iPhone 15 Plus / 15 Pro Max / 16 Plus', w: 430, h: 932 },
+    { id: 'ip16max',  marca: 'Apple',    nome: 'iPhone 16 Pro Max', w: 440, h: 956 },
+
+    { id: 'ga-hd',    marca: 'Samsung',  nome: 'Galaxy A03 / A04 / A05 / A12 / A13 / A14', w: 360, h: 800, pop: true },
+    { id: 'a',        marca: 'Samsung',  nome: 'Galaxy A15 / A25 / A35 / A54 / A55', w: 384, h: 832, pop: true },
+    { id: 'ga51',     marca: 'Samsung',  nome: 'Galaxy A51 / A52 / A71', w: 412, h: 914 },
+    { id: 'gs8',      marca: 'Samsung',  nome: 'Galaxy S8 / S9', w: 360, h: 740 },
+    { id: 'gs20',     marca: 'Samsung',  nome: 'Galaxy S20 / S21', w: 360, h: 800 },
+    { id: 'galaxy',   marca: 'Samsung',  nome: 'Galaxy S22 / S23 / S24', w: 360, h: 780 },
+    { id: 'gs20u',    marca: 'Samsung',  nome: 'Galaxy S20 Ultra / Note 20', w: 412, h: 915 },
+    { id: 'gsultra',  marca: 'Samsung',  nome: 'Galaxy S22 / S23 / S24 Ultra', w: 384, h: 824 },
+    { id: 'gfold',    marca: 'Samsung',  nome: 'Galaxy Z Fold (fechado)', w: 344, h: 882 },
+
+    { id: 'mg4',      marca: 'Motorola', nome: 'Moto G antigo (G4 a G6)', w: 360, h: 640 },
+    { id: 'me',       marca: 'Motorola', nome: 'Moto E (E13 / E22 / E32)', w: 360, h: 800, pop: true },
+    { id: 'mg-hd',    marca: 'Motorola', nome: 'Moto G tela HD+ (G04 / G14 / G24)', w: 360, h: 800, pop: true },
+    { id: 'mg-fhd',   marca: 'Motorola', nome: 'Moto G tela Full HD+ (G54 / G84 / Edge)', w: 412, h: 915, pop: true },
+
+    { id: 'redmi',    marca: 'Xiaomi',   nome: 'Redmi 9 / 10 / 12 / 13 (HD+)', w: 360, h: 800 },
+    { id: 'rnote',    marca: 'Xiaomi',   nome: 'Redmi Note 10 / 11 / 12 / 13 / Poco X', w: 393, h: 873, pop: true },
+
+    { id: 'pixel5',   marca: 'Google',   nome: 'Pixel 5', w: 393, h: 851 },
+    { id: 'pixel',    marca: 'Google',   nome: 'Pixel 7 / 8', w: 412, h: 915 },
+    { id: 'pixel7p',  marca: 'Google',   nome: 'Pixel 7 Pro', w: 412, h: 892 },
+
+    { id: 'ipad',     marca: 'Tablet',   nome: 'iPad mini', w: 768, h: 1024, tipo: 'tablet' },
+    { id: 'ipadair',  marca: 'Tablet',   nome: 'iPad 10ª / iPad Air', w: 820, h: 1180, tipo: 'tablet' },
+    { id: 'ipadpro',  marca: 'Tablet',   nome: 'iPad Pro 11"', w: 834, h: 1194, tipo: 'tablet' },
+    { id: 'ipadpro12',marca: 'Tablet',   nome: 'iPad Pro 12,9"', w: 1024, h: 1366, tipo: 'tablet' },
+    { id: 'gtab',     marca: 'Tablet',   nome: 'Galaxy Tab A / S', w: 800, h: 1280, tipo: 'tablet' },
+
+    { id: 'n1280',    marca: 'Computador', nome: 'Notebook pequeno', w: 1280, h: 800, tipo: 'desktop' },
+    { id: 'note',     marca: 'Computador', nome: 'Notebook HD', w: 1366, h: 768, tipo: 'desktop', pop: true },
+    { id: 'n1440',    marca: 'Computador', nome: 'Notebook 14" / MacBook Air', w: 1440, h: 900, tipo: 'desktop' },
+    { id: 'fhd',      marca: 'Computador', nome: 'Monitor Full HD', w: 1920, h: 1080, tipo: 'desktop' },
+  ];
+  APARELHOS.forEach((a) => { a.tipo = a.tipo || 'celular'; });
+
+  const ATALHOS = [
+    { nome: 'Populares no Brasil', ids: ['ga-hd', 'a', 'mg-fhd', 'rnote', 'ip13'] },
+    { nome: 'Menor e maior', ids: ['se1', 'galaxy', 'ip16max'] },
+    { nome: 'Celular, tablet e PC', ids: ['se', 'ipad', 'note'] },
+    { nome: 'Só iPhone', ids: ['se', 'ip13', 'ip15', 'promax'] },
+    { nome: 'Limpar', ids: [] },
+  ];
+
+  const CHECKLIST = [
+    ['Sem rolagem para o lado', 'Nada passa da largura da tela no 360 e no 375.'],
+    ['Texto legível sem dar zoom', 'Corpo do texto com 16px ou perto disso.'],
+    ['Botões fáceis de tocar', 'Área de toque de uns 44px, sem botões colados.'],
+    ['WhatsApp visível na primeira tela', 'O CTA aparece sem precisar rolar.'],
+    ['Todo CTA vai para o WhatsApp certo', 'Link wa.me com o número do cliente.'],
+    ['Menu abre e fecha', 'Menu do celular funciona e não cobre o conteúdo.'],
+    ['Imagens carregam e cabem', 'Sem imagem estourada, cortada ou pesada demais.'],
+    ['Nada sobreposto', 'Títulos, botões e textos não se encostam.'],
+    ['Dados do cliente corretos', 'Telefone, endereço e horário conferidos na ficha.'],
+    ['Deitado (girado) também funciona', 'Girar o aparelho não quebra o layout.'],
+    ['Tablet e computador ok', 'iPad e notebook sem buracos ou esticados.'],
+    ['Testado no celular de verdade', 'Abrir no próprio celular antes do PR.'],
+  ];
+
+  const SITES_PADRAO = [
+    { nome: 'Conserto de panelas (com diagnóstico)', url: '/Conserto%20de%20panelas/site-novo/' },
+    { nome: 'Conserto de panelas (local 5180)', url: 'http://localhost:5180/' },
+    { nome: 'Conserto de panelas (Netlify)', url: 'https://conserto-de-panelas-bh.netlify.app/' },
+  ];
+  const LETRAS = ['A', 'B', 'C'];
+  const CORES = ['var(--cor-a)', 'var(--cor-b)', 'var(--cor-c)'];
+  const MAX_JANELAS = 3;
+
+  // ---------- armazenamento (falha em silêncio em janela anônima) ----------
+  const CHAVE = 'simulador-mobile:v1';
+  function ler() { try { return JSON.parse(localStorage.getItem(CHAVE)) || {}; } catch { return {}; } }
+  function gravar() { try { localStorage.setItem(CHAVE, JSON.stringify(estado)); } catch {} }
+
+  const salvo = ler();
+  const urlInicial = location.protocol === 'file:' ? SITES_PADRAO[1].url : SITES_PADRAO[0].url;
+  const estado = {
+    janelas: Array.isArray(salvo.janelas) && salvo.janelas.length ? salvo.janelas.slice(0, MAX_JANELAS) : [salvo.url || urlInicial],
+    sites: Array.isArray(salvo.sites) && salvo.sites.length ? salvo.sites : SITES_PADRAO.slice(),
+    ativos: Array.isArray(salvo.ativos) ? salvo.ativos : ['se', 'ip15', 'galaxy'],
+    livres: Array.isArray(salvo.livres) ? salvo.livres : [],
+    girados: salvo.girados || {},
+    zoom: salvo.zoom || 'auto',
+    painel: salvo.painel !== false,
+    sincronizar: !!salvo.sincronizar,
+    checks: salvo.checks || {},
+    foco: 0,
+  };
+  delete estado.url;
+
+  const $ = (s, r = document) => r.querySelector(s);
+  const el = (tag, cls, txt) => { const x = document.createElement(tag); if (cls) x.className = cls; if (txt != null) x.textContent = txt; return x; };
+  const icone = (id) => '<svg><use href="#i-' + id + '"/></svg>';
+
+  function avisar(msg) {
+    const a = $('#aviso');
+    a.textContent = msg;
+    a.classList.add('mostra');
+    clearTimeout(avisar.t);
+    avisar.t = setTimeout(() => a.classList.remove('mostra'), 1800);
+  }
+
+  function normalizar(u) {
+    u = (u || '').trim();
+    if (!u) return '';
+    if (/^(https?:|file:)/i.test(u) || u.startsWith('/')) return u;
+    const local = /^(localhost|127\.|192\.168\.|10\.)/i.test(u);
+    return (local ? 'http://' : 'https://') + u;
+  }
+  const semAcento = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+  function todosAparelhos() {
+    return APARELHOS.concat(estado.livres.map((w) => ({
+      id: 'livre-' + w, marca: 'Livre', nome: 'Largura livre', w, h: Math.round(w * 2.05),
+      tipo: w >= 1024 ? 'desktop' : (w >= 700 ? 'tablet' : 'celular'), livre: true,
+    })));
+  }
+  const ativos = () => estado.ativos.map((id) => todosAparelhos().find((a) => a.id === id)).filter(Boolean);
+  const CURTOS = {
+    se1: 'iPhone SE 1ª', se: 'iPhone SE', ipx: 'iPhone X / 11 Pro', ip11: 'iPhone 11', ip13: 'iPhone 13',
+    ip15: 'iPhone 15', promax: 'iPhone Pro Max', ip16max: 'iPhone 16 Pro Max',
+    'ga-hd': 'Galaxy A básico', a: 'Galaxy A médio', ga51: 'Galaxy A51', gs8: 'Galaxy S8', gs20: 'Galaxy S20',
+    galaxy: 'Galaxy S23', gs20u: 'Galaxy S20 Ultra', gsultra: 'Galaxy S Ultra', gfold: 'Z Fold',
+    mg4: 'Moto G antigo', me: 'Moto E', 'mg-hd': 'Moto G HD+', 'mg-fhd': 'Moto G Full HD+',
+    redmi: 'Redmi', rnote: 'Redmi Note', pixel: 'Pixel 8', ipadair: 'iPad Air', gtab: 'Galaxy Tab',
+    n1280: 'Notebook 1280', note: 'Notebook HD', n1440: 'Notebook 1440',
+  };
+  APARELHOS.forEach((a) => { a.curto = CURTOS[a.id]; });
+  const nomeCurto = (a) => a.livre ? 'Livre' : (a.curto || a.nome);
+
+  // ---------- seletor de aparelhos ----------
+  const pop = $('#pop');
+  const busca = $('#busca');
+  $('#abrir-seletor').addEventListener('click', (e) => {
+    e.stopPropagation();
+    const abrir = !pop.classList.contains('aberto');
+    pop.classList.toggle('aberto', abrir);
+    $('#abrir-seletor').setAttribute('aria-expanded', abrir);
+    if (abrir) { montarLista(); busca.focus(); }
+  });
+  document.addEventListener('click', (e) => {
+    if (pop.classList.contains('aberto') && !e.target.closest('.seletor')) fecharSeletor();
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') fecharSeletor(); });
+  function fecharSeletor() {
+    if (!pop.classList.contains('aberto')) return;
+    pop.classList.remove('aberto');
+    $('#abrir-seletor').setAttribute('aria-expanded', 'false');
+    montarJanelas();
+  }
+  busca.addEventListener('input', montarLista);
+
+  ATALHOS.forEach((at) => {
+    const b = el('button', null, at.nome);
+    b.addEventListener('click', () => {
+      estado.ativos = at.ids.slice();
+      gravar(); montarLista(); montarSelecionados();
+    });
+    $('#atalhos').appendChild(b);
+  });
+
+  function alternar(id, ligar) {
+    if (ligar && !estado.ativos.includes(id)) estado.ativos.push(id);
+    if (!ligar) estado.ativos = estado.ativos.filter((x) => x !== id);
+    gravar(); montarSelecionados();
+  }
+
+  function montarLista() {
+    const termos = semAcento(busca.value).split(/\s+/).filter(Boolean);
+    const lista = $('#lista');
+    lista.innerHTML = '';
+    let marcaAtual = '';
+    let achados = 0;
+    todosAparelhos().forEach((a) => {
+      // cada termo precisa ser o começo de uma palavra: "galaxy a" acha os Galaxy A, não todos os Galaxy
+      const palavras = semAcento(a.marca + ' ' + a.nome + ' ' + (a.curto || '') + ' ' + a.w + ' ' + a.w + 'x' + a.h + (a.pop ? ' popular brasil' : ''))
+        .split(/[\s\/(),+"]+/).filter(Boolean);
+      if (!termos.every((t) => palavras.some((p) => p.startsWith(t)))) return;
+      achados++;
+      if (a.marca !== marcaAtual) { marcaAtual = a.marca; lista.appendChild(el('h4', null, a.marca)); }
+      const op = el('label', 'op');
+      const cb = el('input');
+      cb.type = 'checkbox';
+      cb.checked = estado.ativos.includes(a.id);
+      cb.addEventListener('change', () => alternar(a.id, cb.checked));
+      op.append(cb, el('span', 'nome', a.nome));
+      if (a.pop) op.appendChild(el('span', 'tag', 'popular'));
+      op.appendChild(el('span', 'px', a.w + '×' + a.h));
+      lista.appendChild(op);
+    });
+    if (!achados) lista.appendChild(el('p', 'nada', 'Nenhum aparelho com "' + busca.value + '". Tente a marca ou a largura, ou use a largura livre abaixo.'));
+    $('#contador').textContent = estado.ativos.length + ' na tela';
+  }
+
+  function montarSelecionados() {
+    const caixa = $('#selecionados');
+    caixa.innerHTML = '';
+    ativos().forEach((a) => {
+      const c = el('span', 'chip');
+      c.title = a.nome + ' · ' + a.w + '×' + a.h;
+      c.append(el('span', null, nomeCurto(a)), el('span', 'px', String(a.w)));
+      const x = el('button');
+      x.innerHTML = '×';
+      x.title = 'Tirar ' + nomeCurto(a);
+      x.addEventListener('click', () => {
+        if (a.livre) estado.livres = estado.livres.filter((w) => w !== a.w);
+        alternar(a.id, false);
+        montarJanelas();
+        if (pop.classList.contains('aberto')) montarLista();
+      });
+      c.appendChild(x);
+      caixa.appendChild(c);
+    });
+    $('#qtd').textContent = estado.ativos.length ? '(' + estado.ativos.length + ')' : '';
+    $('#contador').textContent = estado.ativos.length + ' na tela';
+  }
+
+  $('#add-largura').addEventListener('click', () => {
+    const w = Math.round(Number($('#largura').value));
+    if (!(w >= 240 && w <= 1920)) { avisar('Use uma largura entre 240 e 1920'); return; }
+    if (!estado.livres.includes(w)) estado.livres.push(w);
+    $('#largura').value = '';
+    alternar('livre-' + w, true);
+    montarLista();
+  });
+  $('#largura').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#add-largura').click(); });
+
+  // ---------- janelas ----------
+  const caixaJanelas = $('#janelas');
+
+  function opcoesSites(select, url) {
+    select.innerHTML = '';
+    const o0 = el('option', null, 'Sites salvos…');
+    o0.value = '';
+    select.appendChild(o0);
+    estado.sites.forEach((s, i) => {
+      const o = el('option', null, s.nome);
+      o.value = String(i);
+      if (s.url === url) o.selected = true;
+      select.appendChild(o);
+    });
+  }
+
+  function montarJanelas() {
+    caixaJanelas.innerHTML = '';
+    estado.janelas.forEach((url, i) => {
+      const j = el('section', 'janela' + (i === estado.foco && estado.janelas.length > 1 ? ' foco' : ''));
+      j.style.setProperty('--cor', CORES[i]);
+      j.setAttribute('aria-label', 'Janela ' + LETRAS[i]);
+      j.addEventListener('pointerdown', () => focar(i));
+
+      const topo = el('div', 'janela-topo');
+      const letra = el('span', 'letra', LETRAS[i]);
+      const sel = el('select');
+      sel.setAttribute('aria-label', 'Sites salvos da janela ' + LETRAS[i]);
+      opcoesSites(sel, url);
+      sel.addEventListener('change', () => { const s = estado.sites[Number(sel.value)]; if (s) carregar(i, s.url); });
+      const campo = el('input');
+      campo.type = 'text';
+      campo.value = url;
+      campo.placeholder = 'Endereço (ex.: localhost:5180 ou /Sites/clientes/…)';
+      campo.setAttribute('aria-label', 'Endereço da janela ' + LETRAS[i]);
+      campo.addEventListener('keydown', (e) => { if (e.key === 'Enter') carregar(i, campo.value); });
+      const ir = el('button', 'primario', 'Carregar');
+      ir.addEventListener('click', () => carregar(i, campo.value));
+      const jaSalvo = estado.sites.some((s) => s.url === url);
+      const estrela = el('button', 'icone' + (jaSalvo ? ' ativo' : ''));
+      estrela.innerHTML = icone('estrela');
+      estrela.title = jaSalvo ? 'Tirar da lista de sites salvos' : 'Salvar na lista de sites';
+      estrela.addEventListener('click', () => alternarSalvo(normalizar(campo.value)));
+      topo.append(letra, sel, campo, ir, estrela);
+      if (estado.janelas.length > 1) {
+        const fechar = el('button', 'icone');
+        fechar.innerHTML = icone('x');
+        fechar.title = 'Fechar a janela ' + LETRAS[i];
+        fechar.addEventListener('click', () => fecharJanela(i));
+        topo.appendChild(fechar);
+      }
+
+      const palco = el('div', 'palco');
+      j.append(topo, palco);
+      caixaJanelas.appendChild(j);
+    });
+    // os palcos precisam estar na tela para medir o espaço
+    [...caixaJanelas.querySelectorAll('.palco')].forEach((p, i) => montarPalco(p, estado.janelas[i], i));
+    $('#dividir').disabled = estado.janelas.length >= MAX_JANELAS;
+    montarAlvo();
+  }
+
+  function focar(i) {
+    if (estado.foco === i) return;
+    estado.foco = i;
+    caixaJanelas.querySelectorAll('.janela').forEach((j, k) => j.classList.toggle('foco', k === i && estado.janelas.length > 1));
+    montarAlvo();
+  }
+
+  function carregar(i, url) {
+    url = normalizar(url);
+    if (!url) return;
+    estado.janelas[i] = url;
+    estado.foco = i;
+    gravar(); montarJanelas();
+  }
+
+  function fecharJanela(i) {
+    estado.janelas.splice(i, 1);
+    estado.foco = Math.min(estado.foco, estado.janelas.length - 1);
+    gravar(); montarJanelas();
+  }
+
+  $('#dividir').addEventListener('click', () => {
+    if (estado.janelas.length >= MAX_JANELAS) return;
+    estado.janelas.push(estado.janelas[estado.janelas.length - 1]);
+    estado.foco = estado.janelas.length - 1;
+    gravar(); montarJanelas();
+    avisar('Janela ' + LETRAS[estado.foco] + ' aberta: troque o endereço dela');
+    const campos = caixaJanelas.querySelectorAll('.janela-topo input');
+    const c = campos[campos.length - 1];
+    if (c) { c.focus(); c.select(); }
+  });
+
+  function alternarSalvo(url) {
+    if (!url) return;
+    const i = estado.sites.findIndex((s) => s.url === url);
+    if (i >= 0) {
+      if (!confirm('Tirar "' + estado.sites[i].nome + '" da lista de sites salvos?')) return;
+      estado.sites.splice(i, 1);
+    } else {
+      const nome = prompt('Nome do site na lista:', url.replace(/^https?:\/\//, '').replace(/\/$/, ''));
+      if (!nome) return;
+      estado.sites.push({ nome: nome.trim(), url });
+      avisar('Site salvo');
+    }
+    gravar(); montarJanelas();
+  }
+
+  // ---------- aparelhos dentro de uma janela ----------
+  function medidas(a) {
+    const g = !!estado.girados[a.id];
+    return { w: g ? a.h : a.w, h: g ? a.w : a.h };
+  }
+  const borda = (tipo) => tipo === 'tablet' ? 18 : tipo === 'desktop' ? 10 : 13;
+
+  function escala(a, palco) {
+    if (estado.zoom !== 'auto') return Number(estado.zoom);
+    const { w, h } = medidas(a);
+    const b = borda(a.tipo);
+    const estreito = window.matchMedia('(max-width: 900px)').matches;
+    const altura = Math.max(300, (estreito ? window.innerHeight * 0.85 : palco.clientHeight) - 100);
+    const largura = Math.max(220, palco.clientWidth - 34);
+    return Math.min(1, altura / (h + b * 2 + 8), largura / (w + b * 2));
+  }
+
+  function montarPalco(palco, url, j) {
+    const lista = ativos();
+    if (!lista.length) {
+      palco.appendChild(el('p', 'vazio', 'Nenhum aparelho escolhido. Clique em "Aparelhos" lá em cima.'));
+      return;
+    }
+    lista.forEach((a) => {
+      const { w, h } = medidas(a);
+      const b = borda(a.tipo);
+      const s = escala(a, palco);
+      const cw = w + b * 2;
+      const ch = h + b * 2 + (a.tipo === 'desktop' ? 8 : 0);
+
+      const caixa = el('div', 'aparelho');
+      caixa.style.width = Math.max(cw * s, 190) + 'px';
+
+      const topo = el('div', 'aparelho-topo');
+      const info = el('span', 'info');
+      info.title = a.nome;
+      info.append(el('b', null, nomeCurto(a)), el('span', 'medida', w + '×' + h + (s < 1 ? ' · ' + Math.round(s * 100) + '%' : '')));
+      const acoes = el('span', 'acoes');
+      topo.append(info, acoes);
+
+      const iframe = el('iframe');
+      iframe.width = w;
+      iframe.height = h;
+      iframe.title = nomeCurto(a) + ' — janela ' + LETRAS[j];
+      iframe.src = url;
+      iframe.dataset.janela = j;
+
+      const bt = (ic, title, fn) => {
+        const x = el('button');
+        x.innerHTML = icone(ic); x.title = title; x.setAttribute('aria-label', title);
+        x.addEventListener('click', fn);
+        acoes.appendChild(x);
+      };
+      bt('girar', 'Girar este aparelho', () => { estado.girados[a.id] = !estado.girados[a.id]; gravar(); montarJanelas(); });
+      bt('recarregar', 'Recarregar', () => { iframe.src = url; });
+      bt('abrir', 'Abrir em nova aba', () => { window.open(url, '_blank', 'noopener'); });
+
+      const moldura = el('div', 'moldura');
+      moldura.style.width = cw * s + 'px';
+      moldura.style.height = ch * s + 'px';
+      const casca = el('div', 'casca' + (a.tipo !== 'celular' ? ' ' + a.tipo : ''));
+      casca.style.transform = 'scale(' + s + ')';
+      casca.appendChild(iframe);
+      moldura.appendChild(casca);
+
+      const diag = el('div', 'diagnostico');
+      diag.dataset.aparelho = nomeCurto(a) + ' ' + w + 'px';
+      iframe.addEventListener('load', () => { diagnosticar(iframe, diag); ligarRolagem(iframe); });
+
+      caixa.append(topo, moldura, diag);
+      palco.appendChild(caixa);
+    });
+  }
+
+  // ---------- rolar junto (só na mesma origem) ----------
+  // Quem foi rolado pela sincronização ignora os próprios eventos por um instante,
+  // senão cada janela devolve a posição para as outras (eco).
+  const travadoAte = new WeakMap();
+  function ligarRolagem(iframe) {
+    let win;
+    try { win = iframe.contentWindow; void win.document; } catch { return; }
+    win.addEventListener('scroll', () => {
+      if (!estado.sincronizar) return;
+      if ((travadoAte.get(win) || 0) > performance.now()) return;
+      const doc = win.document.documentElement;
+      const max = doc.scrollHeight - win.innerHeight;
+      const proporcao = max > 0 ? win.scrollY / max : 0;
+      document.querySelectorAll('.casca iframe').forEach((f) => {
+        if (f === iframe) return;
+        try {
+          const w2 = f.contentWindow;
+          const m2 = w2.document.documentElement.scrollHeight - w2.innerHeight;
+          travadoAte.set(w2, performance.now() + 250);
+          w2.scrollTo({ top: proporcao * m2, behavior: 'instant' });
+        } catch {}
+      });
+    }, { passive: true });
+  }
+  const btSinc = $('#sincronizar');
+  btSinc.classList.toggle('ativo', estado.sincronizar);
+  btSinc.addEventListener('click', () => {
+    estado.sincronizar = !estado.sincronizar;
+    btSinc.classList.toggle('ativo', estado.sincronizar);
+    gravar();
+    avisar(estado.sincronizar ? 'Rolar junto ligado' : 'Rolar junto desligado');
+  });
+
+  // ---------- diagnóstico automático (só na mesma origem) ----------
+  function selo(diag, classe, texto, dica) {
+    const x = el('span', 'selo ' + classe, texto);
+    if (dica) x.title = dica;
+    diag.appendChild(x);
+  }
+  function diagnosticar(iframe, diag) {
+    diag.innerHTML = '';
+    let doc;
+    try { doc = iframe.contentDocument; if (!doc || !doc.body) throw 0; }
+    catch { selo(diag, '', 'sem diagnóstico', 'O site está em outra origem. Veja o LEIAME.md para ativar.'); return; }
+
+    setTimeout(() => {
+      try {
+        const win = iframe.contentWindow;
+        const larg = Math.max(doc.documentElement.scrollWidth, doc.body.scrollWidth);
+        const sobra = larg - win.innerWidth;
+        if (sobra > 1) selo(diag, 'ruim', '↔ passa ' + sobra + 'px', culpados(doc, win.innerWidth));
+        else selo(diag, 'ok', '↔ sem rolagem lateral');
+
+        const tocaveis = [...doc.querySelectorAll('a[href], button, input, select, textarea, [role="button"]')]
+          .filter((x) => { const r = x.getBoundingClientRect(); return r.width > 0 && r.height > 0 && win.getComputedStyle(x).visibility !== 'hidden'; });
+        const pequenos = tocaveis.filter((x) => {
+          const r = x.getBoundingClientRect();
+          const emTexto = x.tagName === 'A' && x.closest('p, li') && !x.className;
+          return !emTexto && (r.height < 40 || r.width < 40);
+        });
+        selo(diag, pequenos.length ? 'aviso' : 'ok', '👆 ' + pequenos.length + ' alvo(s) < 40px', pequenos.slice(0, 8).map(descrever).join('\n'));
+
+        const letras = [...doc.querySelectorAll('p, li, a, span, label, small, td')]
+          .filter((x) => [...x.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()))
+          .filter((x) => parseFloat(win.getComputedStyle(x).fontSize) < 13);
+        selo(diag, letras.length ? 'aviso' : 'ok', 'Aa ' + letras.length + ' texto(s) < 13px', letras.slice(0, 8).map(descrever).join('\n'));
+
+        const wa = [...doc.querySelectorAll('a[href]')].filter((x) => /wa\.me|api\.whatsapp\.com|whatsapp:/i.test(x.getAttribute('href')));
+        const numeros = [...new Set(wa.map((x) => (x.getAttribute('href').match(/(?:wa\.me\/|phone=)(\d+)/) || [])[1]).filter(Boolean))];
+        selo(diag, wa.length ? (numeros.length > 1 ? 'aviso' : 'ok') : 'aviso',
+          '💬 ' + wa.length + ' WhatsApp' + (numeros.length > 1 ? ' · ' + numeros.length + ' números!' : ''), numeros.join('\n'));
+        const primeira = wa.some((x) => { const r = x.getBoundingClientRect(); return r.top < win.innerHeight && r.bottom > 0 && r.width > 0; });
+        if (wa.length) selo(diag, primeira ? 'ok' : 'aviso', primeira ? 'WhatsApp na 1ª tela' : 'WhatsApp só rolando');
+      } catch (e) {
+        selo(diag, '', 'diagnóstico falhou: ' + e.message);
+      }
+    }, 600);
+  }
+  function descrever(x) {
+    const t = (x.textContent || x.getAttribute('aria-label') || '').trim().replace(/\s+/g, ' ').slice(0, 40);
+    return x.tagName.toLowerCase() + (x.className && typeof x.className === 'string' ? '.' + x.className.trim().split(/\s+/)[0] : '') + (t ? ' "' + t + '"' : '');
+  }
+  function culpados(doc, larg) {
+    const lista = [...doc.body.querySelectorAll('*')].filter((x) => x.getBoundingClientRect().right > larg + 1);
+    const folhas = lista.filter((x) => !lista.some((o) => o !== x && x.contains(o)));
+    return 'Passam da tela:\n' + folhas.slice(0, 8).map(descrever).join('\n');
+  }
+
+  // ---------- checklist (segue a janela escolhida) ----------
+  const urlAlvo = () => (estado.janelas[estado.foco] || estado.janelas[0]).replace(/[?#].*$/, '');
+  function montarAlvo() {
+    const sel = $('#alvo');
+    sel.innerHTML = '';
+    estado.janelas.forEach((u, i) => {
+      const s = estado.sites.find((x) => x.url === u);
+      const o = el('option', null, 'Janela ' + LETRAS[i] + ' · ' + (s ? s.nome : u));
+      o.value = String(i);
+      if (i === estado.foco) o.selected = true;
+      sel.appendChild(o);
+    });
+    sel.parentElement.style.display = estado.janelas.length > 1 ? '' : 'none';
+    montarChecklist();
+  }
+  $('#alvo').addEventListener('change', (e) => focar(Number(e.target.value)));
+
+  function montarChecklist() {
+    const k = urlAlvo();
+    const dados = estado.checks[k] || { feitos: [], notas: '' };
+    $('#check-url').textContent = k;
+    const itens = $('#itens');
+    itens.innerHTML = '';
+    CHECKLIST.forEach(([titulo, dica], i) => {
+      const l = el('label', 'item');
+      const cb = el('input');
+      cb.type = 'checkbox';
+      cb.checked = dados.feitos.includes(i);
+      const txt = el('span');
+      txt.append(el('span', 't', titulo), el('small', null, dica));
+      l.append(cb, txt);
+      cb.addEventListener('change', () => {
+        const d = estado.checks[k] || { feitos: [], notas: '' };
+        d.feitos = cb.checked ? [...new Set([...d.feitos, i])] : d.feitos.filter((x) => x !== i);
+        estado.checks[k] = d; gravar(); progresso();
+      });
+      itens.appendChild(l);
+    });
+    $('#notas').value = dados.notas || '';
+    progresso();
+  }
+  function progresso() {
+    const d = estado.checks[urlAlvo()] || { feitos: [] };
+    $('#barra').style.width = (d.feitos.length / CHECKLIST.length * 100) + '%';
+    $('#conta').textContent = d.feitos.length + '/' + CHECKLIST.length;
+  }
+  $('#notas').addEventListener('input', (e) => {
+    const k = urlAlvo();
+    const d = estado.checks[k] || { feitos: [], notas: '' };
+    d.notas = e.target.value; estado.checks[k] = d; gravar();
+  });
+  $('#limpar').addEventListener('click', () => {
+    if (!confirm('Zerar o checklist e as anotações deste site?')) return;
+    delete estado.checks[urlAlvo()]; gravar(); montarChecklist();
+  });
+  $('#copiar').addEventListener('click', async () => {
+    const d = estado.checks[urlAlvo()] || { feitos: [], notas: '' };
+    const linhas = [
+      '## Teste mobile',
+      'Site: ' + urlAlvo(),
+      'Aparelhos: ' + ativos().map((a) => nomeCurto(a) + ' ' + medidas(a).w + 'px').join(', '),
+      '',
+      ...CHECKLIST.map(([t], i) => '- [' + (d.feitos.includes(i) ? 'x' : ' ') + '] ' + t),
+    ];
+    const janela = caixaJanelas.querySelectorAll('.janela')[estado.foco];
+    const diags = janela ? [...janela.querySelectorAll('.diagnostico')].map((c) => {
+      const s = [...c.querySelectorAll('.selo')].map((x) => x.textContent).join(' · ');
+      return s ? '- ' + c.dataset.aparelho + ': ' + s : '';
+    }).filter(Boolean) : [];
+    if (diags.length) linhas.push('', '### Diagnóstico automático', ...diags);
+    if (d.notas && d.notas.trim()) linhas.push('', '### Anotações', d.notas.trim());
+    const texto = linhas.join('\n');
+    try { await navigator.clipboard.writeText(texto); avisar('Relatório copiado'); }
+    catch { prompt('Copie o relatório:', texto); }
+  });
+
+  // ---------- controles gerais ----------
+  $('#recarregar').addEventListener('click', () => {
+    document.querySelectorAll('.casca iframe').forEach((f) => { f.src = estado.janelas[Number(f.dataset.janela)]; });
+  });
+  $('#girar').addEventListener('click', () => {
+    const lista = ativos();
+    const algumEmPe = lista.some((a) => !estado.girados[a.id]);
+    lista.forEach((a) => { estado.girados[a.id] = algumEmPe; });
+    gravar(); montarJanelas();
+  });
+  const zoom = $('#zoom');
+  function marcarZoom() { zoom.querySelectorAll('button').forEach((b) => b.classList.toggle('ativo', b.dataset.z === estado.zoom)); }
+  zoom.addEventListener('click', (e) => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    estado.zoom = b.dataset.z; gravar(); marcarZoom(); montarJanelas();
+  });
+  const lateral = $('#lateral');
+  const btPainel = $('#painel');
+  function aplicarPainel() {
+    lateral.classList.toggle('fechado', !estado.painel);
+    btPainel.classList.toggle('ativo', estado.painel);
+  }
+  btPainel.addEventListener('click', () => { estado.painel = !estado.painel; gravar(); aplicarPainel(); montarJanelas(); });
+
+  let tempo;
+  window.addEventListener('resize', () => {
+    if (estado.zoom !== 'auto') return;
+    clearTimeout(tempo);
+    tempo = setTimeout(montarJanelas, 250);
+  });
+
+  // ---------- início ----------
+  const daBarra = new URLSearchParams(location.search).getAll('url').map(normalizar).filter(Boolean);
+  if (daBarra.length) estado.janelas = daBarra.slice(0, MAX_JANELAS);
+  aplicarPainel();
+  marcarZoom();
+  montarSelecionados();
+  montarJanelas();
+})();
+</script>
+</body>
+</html>
